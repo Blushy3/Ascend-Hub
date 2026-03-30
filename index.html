@@ -457,16 +457,6 @@ body.light-theme .player-badge {
   margin-top: 10px;
 }
 
-.table-row {
-  display:flex;
-  justify-content:space-between;
-  padding:6px 0;
-  border-bottom:1px solid var(--card-border);
-}
-.table-row span { flex:1; text-align:center; }
-.table-row.team { background: rgba(70,255,154,0.1); }
-.table-row.enemy { background: rgba(255,70,85,0.1); }
-
 #blur-overlay {
   position: fixed;
   inset: 0;
@@ -938,11 +928,11 @@ const translations = {
 
 const players = [
   { name: "Blushyk", agent: "Raze" },
-  { name: "Gordon Ramsey", agent: "Brimstone" },
+  { name: "Gordon Ramsey", agent: "?" },
   { name: "Enosh Samira", agent: "Veto" },
-  { name: "Licz1", agent: "Tejo" },
+  { name: "Licz1", agent: "?" },
   { name: "Mdzer", agent: "Jett" },
-  { name: "Future", agent: "?" }
+  { name: "Future", agent: "Rezerwa" }
 ];
 const agentIcons = {
   "Astra": "agents/astra.png",
@@ -1229,41 +1219,6 @@ function toggleHistory() {
 
   updateHistoryToggleLabel();
 }
-
-function openMatchModal(matchId) {
-  const modal = document.getElementById('matchModal');
-  const table = document.getElementById('matchTable');
-  table.innerHTML = '';
-  const matchData = {
-    "match1": [
-      { name: "Blushyk", team: true, ACS: 250, KDA: "3.5", eco: "Full Buy", firstBlood: "Yes" },
-      { name: "Gordon Ramsey", team: true, ACS: 220, KDA: "2.8", eco: "Full Buy", firstBlood: "No" },
-      { name: "Enosh Samira", team: true, ACS: 180, KDA: "1.9", eco: "Half Buy", firstBlood: "No" },
-      { name: "Licz1", team: true, ACS: 150, KDA: "1.5", eco: "Eco", firstBlood: "No" },
-      { name: "Mdzer", team: true, ACS: 200, KDA: "2.3", eco: "Full Buy", firstBlood: "Yes" },
-      { name: "Future", team: true, ACS: 170, KDA: "2.0", eco: "Half Buy", firstBlood: "No" },
-      { name: "Enemy1", team: false, ACS: 240, KDA: "3.0", eco: "Full Buy", firstBlood: "Yes" },
-      { name: "Enemy2", team: false, ACS: 210, KDA: "2.5", eco: "Full Buy", firstBlood: "No" },
-      { name: "Enemy3", team: false, ACS: 190, KDA: "2.0", eco: "Half Buy", firstBlood: "No" },
-      { name: "Enemy4", team: false, ACS: 160, KDA: "1.8", eco: "Eco", firstBlood: "No" },
-      { name: "Enemy5", team: false, ACS: 230, KDA: "2.7", eco: "Full Buy", firstBlood: "Yes" }
-    ]
-  };
-  matchData[matchId].forEach(p => {
-    const row = document.createElement('div');
-    row.className = 'table-row ' + (p.team ? 'team' : 'enemy');
-    row.innerHTML = `<span>${p.name}</span><span>${p.ACS}</span><span>${p.KDA}</span><span>${p.eco}</span><span>${p.firstBlood}</span>`;
-    table.appendChild(row);
-  });
-  modal.classList.add('active');
-}
-window.addEventListener('click', (e) => {
-  const matchModal = document.getElementById('matchModal');
-  
-  if(matchModal && !matchModal.contains(e.target) && !e.target.classList.contains('history-row')){
-    matchModal.classList.remove('active');
-  }
-});
 </script>
 
 </body>
