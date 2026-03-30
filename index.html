@@ -214,6 +214,25 @@ body::-webkit-scrollbar-track, body::-webkit-scrollbar-thumb {
   border: 1px solid var(--card-border);
   transition: transform 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease, background 0.35s ease;
 }
+.player-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(255, 70, 85, 0.95), rgba(255, 122, 133, 0.92));
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  box-shadow: 0 10px 24px rgba(255, 70, 85, 0.28);
+  z-index: 3;
+  pointer-events: none;
+}
+body.light-theme .player-badge {
+  box-shadow: 0 12px 24px rgba(213, 56, 82, 0.18);
+}
 .player:hover {
   transform: translateY(-4px);
   border: 1px solid rgba(255,70,85,0.45);
@@ -884,7 +903,8 @@ const translations = {
     cancelLabel: "Anuluj",
     confirmRefresh: "Odswiez",
     mapTitlePrefix: "Mapa",
-    titleSubtitle: "Panel druzyny premierowej"
+    titleSubtitle: "Panel druzyny premierowej",
+    reserveBadge: "Rezerwowy"
   },
   en: {
     infoTitle: "Info",
@@ -911,17 +931,18 @@ const translations = {
     cancelLabel: "Cancel",
     confirmRefresh: "Refresh",
     mapTitlePrefix: "Map",
-    titleSubtitle: "Premier Team Dashboard"
+    titleSubtitle: "Premier Team Dashboard",
+    reserveBadge: "Reserve"
   }
 };
 
 const players = [
   { name: "Blushyk", agent: "Raze" },
-  { name: "Gordon Ramsey", agent: "?" },
+  { name: "Gordon Ramsey", agent: "Brimstone" },
   { name: "Enosh Samira", agent: "Veto" },
   { name: "Licz1", agent: "Tejo" },
   { name: "Mdzer", agent: "Jett" },
-  { name: "Future", agent: "Rezerwa" }
+  { name: "Future", agent: "?" }
 ];
 const agentIcons = {
   "Astra": "agents/astra.png",
@@ -1038,6 +1059,35 @@ function updateHistoryToggleLabel() {
   historyButton.innerHTML = `${actionLabel} <span class="expand-arrow${hiddenRows.length === 0 ? " rotated" : ""}">▼</span>`;
 }
 
+function renderTeam() {
+  team.innerHTML = "";
+
+  players.forEach((p) => {
+    const isReserve = p.name === "Future";
+    const el = document.createElement("div");
+    el.className = "player";
+    el.innerHTML = `
+      ${isReserve ? `<div class="player-badge">${translations[currentLanguage].reserveBadge}</div>` : ""}
+      <div class="player-name">${p.name}</div>
+      <img src="${agentIcons[p.agent]}" alt="${p.agent}">
+    `;
+
+    el.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const x = e.clientX;
+      const y = e.clientY;
+      menu.style.left = x + "px";
+      menu.style.top = y + "px";
+      menuTitle.textContent = `${p.name} - ${p.agent}`;
+      lineupLink.href = lineupLinks[p.agent];
+      statsLink.href = statsLinks[p.name];
+      menu.classList.add("active");
+    });
+
+    team.appendChild(el);
+  });
+}
+
 function applyLanguage(language) {
   currentLanguage = language;
   document.documentElement.lang = language;
@@ -1068,6 +1118,7 @@ function applyLanguage(language) {
     document.getElementById("mapTitle").textContent = `${translations[language].mapTitlePrefix}: ${currentMapName}`;
   }
 
+  renderTeam();
   updateHistoryToggleLabel();
   applyTheme(document.body.classList.contains("light-theme") ? "light" : "dark");
 }
@@ -1100,21 +1151,7 @@ refreshConfirmBtn.addEventListener("click", () => {
   window.location.reload(true);
 });
 
-players.forEach(p => {
-  const el = document.createElement("div");
-  el.className = "player";
-  el.innerHTML = `<div class="player-name">${p.name}</div><img src="${agentIcons[p.agent]}">`;
-  el.addEventListener("click", (e) => {
-    e.stopPropagation();
-    const x = e.clientX; const y = e.clientY;
-    menu.style.left = x + "px"; menu.style.top = y + "px";
-    menuTitle.textContent = `${p.name} - ${p.agent}`;
-    lineupLink.href = lineupLinks[p.agent];
-    statsLink.href = statsLinks[p.name];
-    menu.classList.add("active");
-  });
-  team.appendChild(el);
-});
+renderTeam();
 window.addEventListener("click", (e) => {
   const mapModal = document.getElementById('mapModal');
   if (mapModal.classList.contains('active')) {
