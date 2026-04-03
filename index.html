@@ -1046,7 +1046,9 @@ body.light-theme .player-name {
 const SUPABASE_URL = "https://bhufgplssyhpkxtyfwwh.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_nDhdGaJApbYuGtTblHo2AQ_AbVlT2G7";
 const LOGIN_EMAIL_DOMAIN = "eter.local";
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+const supabase = window.supabase?.createClient
+  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY)
+  : null;
 
 const translations = {
   pl: {
@@ -1090,7 +1092,8 @@ const translations = {
     loginSignedAs: "Zalogowano jako",
     logoutAction: "Wyloguj",
     logoutSuccess: "Wylogowano.",
-    authReady: "Polaczono z Supabase."
+    authReady: "Polaczono z Supabase.",
+    authUnavailable: "Logowanie jest chwilowo niedostepne. Reszta strony dziala normalnie."
   },
   en: {
     infoTitle: "Info",
@@ -1133,7 +1136,8 @@ const translations = {
     loginSignedAs: "Signed in as",
     logoutAction: "Sign out",
     logoutSuccess: "Signed out.",
-    authReady: "Connected to Supabase."
+    authReady: "Connected to Supabase.",
+    authUnavailable: "Login is temporarily unavailable. The rest of the site still works normally."
   }
 };
 
@@ -1264,7 +1268,7 @@ function updateAuthUi() {
     passwordInput.value = "";
     passwordInput.disabled = true;
   } else {
-    setAuthStatus(translations[currentLanguage].authReady);
+    setAuthStatus(supabase ? translations[currentLanguage].authReady : translations[currentLanguage].authUnavailable);
     loginButton.querySelector("[data-i18n='loginShort']").textContent = translations[currentLanguage].loginShort;
     authForm.querySelector("[data-i18n='loginAction']").textContent = translations[currentLanguage].loginAction;
     loginInput.disabled = false;
@@ -1275,6 +1279,11 @@ function updateAuthUi() {
 }
 
 async function restoreAuthState() {
+  if (!supabase) {
+    updateAuthUi();
+    return;
+  }
+
   const { data, error } = await supabase.auth.getSession();
   if (!error) {
     authUser = data.session?.user || null;
@@ -1283,6 +1292,13 @@ async function restoreAuthState() {
 }
 
 async function signInWithLogin(login, password) {
+  if (!supabase) {
+    return {
+      data: null,
+      error: { message: translations[currentLanguage].authUnavailable }
+    };
+  }
+
   return supabase.auth.signInWithPassword({
     email: normalizeLoginToEmail(login),
     password
@@ -1290,6 +1306,11 @@ async function signInWithLogin(login, password) {
 }
 
 async function signOutUser() {
+  if (!supabase) {
+    setAuthStatus(translations[currentLanguage].authUnavailable);
+    return;
+  }
+
   const { error } = await supabase.auth.signOut();
   if (error) {
     setAuthStatus(error.message);
@@ -1463,10 +1484,12 @@ refreshConfirmBtn.addEventListener("click", () => {
 });
 
 restoreAuthState();
-supabase.auth.onAuthStateChange((_event, session) => {
-  authUser = session?.user || null;
-  updateAuthUi();
-});
+if (supabase) {
+  supabase.auth.onAuthStateChange((_event, session) => {
+    authUser = session?.user || null;
+    updateAuthUi();
+  });
+}
 
 renderTeam();
 window.addEventListener("click", (e) => {
