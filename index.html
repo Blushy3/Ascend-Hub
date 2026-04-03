@@ -2209,6 +2209,7 @@ function toggleHistory() {
   const ADMIN_LOGIN_FALLBACKS = ["admin", "blushyk"];
   const REMEMBER_ME_KEY = "eter-remember-me";
   const SESSION_ACTIVE_KEY = "eter-session-active";
+  const SUPABASE_STORAGE_KEY = "sb-bhufgplssyhpkxtyfwwh-auth-token";
   const app = window.eterApp;
 
   if (!app) {
@@ -2248,6 +2249,14 @@ function toggleHistory() {
   function isFallbackAdmin(user) {
     const loginName = user && user.email ? user.email.split("@")[0].toLowerCase() : "";
     return ADMIN_LOGIN_FALLBACKS.indexOf(loginName) !== -1;
+  }
+
+  function clearStoredAuth() {
+    try {
+      localStorage.removeItem(SUPABASE_STORAGE_KEY);
+      sessionStorage.removeItem(SUPABASE_STORAGE_KEY);
+    } catch (_error) {
+    }
   }
 
   function syncUi() {
@@ -2307,6 +2316,7 @@ function toggleHistory() {
     authChecking = false;
     localStorage.removeItem(REMEMBER_ME_KEY);
     sessionStorage.removeItem(SESSION_ACTIVE_KEY);
+    clearStoredAuth();
     app.setCurrentRole("guest");
     app.setCurrentProfile(null);
     app.setCurrentPreference(null);
@@ -2410,6 +2420,14 @@ function toggleHistory() {
   async function restoreSession() {
     if (!authClient) {
       authChecking = false;
+      syncUi();
+      return;
+    }
+
+    if (!localStorage.getItem(REMEMBER_ME_KEY) && !sessionStorage.getItem(SESSION_ACTIVE_KEY)) {
+      clearStoredAuth();
+      authChecking = false;
+      currentUser = null;
       syncUi();
       return;
     }
