@@ -713,6 +713,170 @@ body.light-theme .player-badge {
   color: var(--muted-text);
 }
 
+.management-panel[hidden] {
+  display: none;
+}
+
+.management-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.management-title-wrap {
+  display: grid;
+  gap: 4px;
+}
+
+.management-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.management-subtitle {
+  margin: 0;
+  color: var(--muted-text);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.management-sections {
+  display: grid;
+  gap: 16px;
+}
+
+.management-block {
+  padding: 18px;
+  border-radius: 18px;
+  border: 1px solid var(--card-border);
+  background: var(--card-bg-strong);
+}
+
+.management-block[hidden] {
+  display: none;
+}
+
+.management-block h4 {
+  margin: 0 0 14px 0;
+  font-size: 15px;
+}
+
+.editor-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.editor-field {
+  display: grid;
+  gap: 6px;
+}
+
+.editor-field.full {
+  grid-column: 1 / -1;
+}
+
+.editor-label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted-text);
+}
+
+.editor-input,
+.editor-select {
+  min-height: 44px;
+  padding: 0 14px;
+  border-radius: 14px;
+  border: 1px solid var(--card-border);
+  background: var(--card-bg);
+  color: var(--text-color);
+  font: inherit;
+}
+
+.editor-input:focus,
+.editor-select:focus {
+  outline: none;
+  border-color: rgba(255, 70, 85, 0.45);
+  box-shadow: 0 0 0 4px rgba(255, 70, 85, 0.12);
+}
+
+.management-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.management-btn {
+  min-height: 42px;
+  padding: 10px 16px;
+  border: 1px solid var(--card-border);
+  border-radius: 14px;
+  background: var(--card-bg);
+  color: var(--text-color);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.management-btn.primary {
+  border-color: transparent;
+  background: linear-gradient(135deg, var(--accent), var(--accent-soft));
+  color: #fff;
+}
+
+.management-btn.danger {
+  border-color: rgba(255, 70, 85, 0.24);
+  color: var(--danger);
+}
+
+.management-status {
+  margin: 0;
+  color: var(--muted-text);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.editor-list {
+  display: grid;
+  gap: 12px;
+}
+
+.editor-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: end;
+  padding: 14px;
+  border-radius: 16px;
+  border: 1px solid var(--card-border);
+  background: var(--card-bg);
+}
+
+.editor-row.history-editor {
+  grid-template-columns: repeat(4, minmax(0, 1fr)) auto;
+}
+
+.editor-row-meta {
+  display: grid;
+  gap: 6px;
+}
+
+.editor-row-title {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.editor-row-note {
+  color: var(--muted-text);
+  font-size: 13px;
+}
+
 .refresh-confirm.active {
   opacity: 1;
   transform: translateY(0) scale(1);
@@ -903,6 +1067,12 @@ body.light-theme .player-name {
 }
 
 @media (max-width: 640px) {
+  .editor-grid,
+  .editor-row,
+  .editor-row.history-editor {
+    grid-template-columns: 1fr;
+  }
+
   .auth-panel,
   .refresh-confirm {
     left: 14px;
@@ -930,21 +1100,96 @@ body.light-theme .player-name {
   </div>
 
   <div class="dashboard-grid" id="dashboardGrid">
+    <div class="card dashboard-card full management-panel" id="managementPanel" hidden>
+      <div class="management-header">
+        <div class="management-title-wrap">
+          <h3 class="management-title" data-i18n="managementTitle">Panel zarzadzania</h3>
+          <p class="management-subtitle" id="managementSubtitle" data-i18n="managementGuestSubtitle">Zaloguj sie, aby zarzadzac danymi strony lub zapisac swoja preferowana postac.</p>
+        </div>
+      </div>
+      <div class="management-sections">
+        <div class="management-block" id="adminPanel" hidden>
+          <h4 data-i18n="adminSectionTitle">Admin</h4>
+          <div class="editor-grid">
+            <div class="editor-field">
+              <label class="editor-label" for="adminMatchDate" data-i18n="dateLabel">Data</label>
+              <input class="editor-input" id="adminMatchDate" type="text">
+            </div>
+            <div class="editor-field">
+              <label class="editor-label" for="adminMatchTime" data-i18n="timeLabel">Godzina</label>
+              <input class="editor-input" id="adminMatchTime" type="text">
+            </div>
+            <div class="editor-field">
+              <label class="editor-label" for="adminMatchesCount" data-i18n="matchesLabel">Mecze</label>
+              <input class="editor-input" id="adminMatchesCount" type="number" min="0">
+            </div>
+            <div class="editor-field">
+              <label class="editor-label" for="adminCurrentMap" data-i18n="mapLabel">Mapa</label>
+              <select class="editor-select" id="adminCurrentMap"></select>
+            </div>
+            <div class="editor-field">
+              <label class="editor-label" for="adminPremierScore" data-i18n="premierScore">Premier Score</label>
+              <input class="editor-input" id="adminPremierScore" type="number" min="0">
+            </div>
+            <div class="editor-field">
+              <label class="editor-label" for="adminPremierScoreMax" data-i18n="scoreMaxLabel">Maks</label>
+              <input class="editor-input" id="adminPremierScoreMax" type="number" min="1">
+            </div>
+            <div class="editor-field full">
+              <label class="editor-label" for="adminScoreInfo" data-i18n="scoreInfoLabel">Opis progu</label>
+              <input class="editor-input" id="adminScoreInfo" type="text">
+            </div>
+          </div>
+          <div class="management-actions">
+            <button class="management-btn primary" id="saveSettingsButton" type="button" data-i18n="saveSettingsAction">Zapisz info</button>
+          </div>
+
+          <h4 data-i18n="teamEditorTitle">Sklad i role</h4>
+          <div class="editor-list" id="playerEditors"></div>
+          <div class="management-actions">
+            <button class="management-btn primary" id="savePlayersButton" type="button" data-i18n="saveTeamAction">Zapisz ekipe</button>
+          </div>
+
+          <h4 data-i18n="historyEditorTitle">Historia meczow</h4>
+          <div class="editor-list" id="historyEditors"></div>
+          <div class="management-actions">
+            <button class="management-btn" id="addHistoryButton" type="button" data-i18n="addHistoryAction">Dodaj mecz</button>
+            <button class="management-btn primary" id="saveHistoryButton" type="button" data-i18n="saveHistoryAction">Zapisz historie</button>
+          </div>
+          <p class="management-status" id="adminStatus"></p>
+        </div>
+
+        <div class="management-block" id="userPanel" hidden>
+          <h4 data-i18n="userSectionTitle">Moja deklaracja</h4>
+          <div class="editor-grid">
+            <div class="editor-field full">
+              <label class="editor-label" for="preferredAgentSelect" data-i18n="preferredAgentLabel">Postac</label>
+              <select class="editor-select" id="preferredAgentSelect"></select>
+            </div>
+          </div>
+          <div class="management-actions">
+            <button class="management-btn primary" id="savePreferenceButton" type="button" data-i18n="savePreferenceAction">Zapisz deklaracje</button>
+          </div>
+          <p class="management-status" id="userStatus"></p>
+        </div>
+      </div>
+    </div>
+
     <div class="card info-panel dashboard-card half">
       <h3 data-i18n="infoTitle">Info</h3>
       <div class="info-row">
-        <div class="info-tile"><span class="info-label" data-i18n="dateLabel">Data</span><span class="info-value">04.04.2026</span></div>
-        <div class="info-tile"><span class="info-label" data-i18n="timeLabel">Godzina</span><span class="info-value">21:00 - 22:00</span></div>
-        <div class="info-tile"><span class="info-label" data-i18n="matchesLabel">Mecze</span><span class="info-value">2</span></div>
-        <div class="info-tile map-click" onclick="showMap(event, 'LOTUS')" style="width: 100%; cursor: pointer;"><span class="info-label" data-i18n="mapLabel">Mapa</span><span class="info-value">LOTUS</span></div>
+        <div class="info-tile"><span class="info-label" data-i18n="dateLabel">Data</span><span class="info-value" id="infoDateValue">04.04.2026</span></div>
+        <div class="info-tile"><span class="info-label" data-i18n="timeLabel">Godzina</span><span class="info-value" id="infoTimeValue">21:00 - 22:00</span></div>
+        <div class="info-tile"><span class="info-label" data-i18n="matchesLabel">Mecze</span><span class="info-value" id="infoMatchesValue">2</span></div>
+        <div class="info-tile map-click" id="infoMapTile" onclick="handleCurrentMapClick(event)" style="width: 100%; cursor: pointer;"><span class="info-label" data-i18n="mapLabel">Mapa</span><span class="info-value" id="infoMapValue">LOTUS</span></div>
       </div>
     </div>
 
     <div class="card score-panel dashboard-card half">
       <h3 data-i18n="premierScore">Premier Score</h3>
-      <div class="premier-score">325 / 600</div>
-      <div class="progress"><div class="progress-bar"></div></div>
-      <div class="score-info">Min. 500 Premier Score aby zakwalifikowaÄ‡ siÄ™ do playoffs</div>
+      <div class="premier-score" id="premierScoreValue">325 / 600</div>
+      <div class="progress"><div class="progress-bar" id="premierScoreBar"></div></div>
+      <div class="score-info" id="scoreInfoText">Min. 500 Premier Score aby zakwalifikowaÄ‡ siÄ™ do playoffs</div>
     </div>
 
   <div class="card dashboard-card full">
@@ -1084,7 +1329,33 @@ const translations = {
     loginSignedAs: "Zalogowano jako",
     logoutAction: "Wyloguj",
     logoutSuccess: "Wylogowano.",
-    authReady: "Polaczono z Supabase."
+    authReady: "Polaczono z Supabase.",
+    managementTitle: "Panel zarzadzania",
+    managementGuestSubtitle: "Zaloguj sie, aby zarzadzac danymi strony lub zapisac swoja preferowana postac.",
+    managementAdminSubtitle: "Masz uprawnienia administratora. Tutaj edytujesz dane widoczne dla wszystkich.",
+    managementUserSubtitle: "Jestes zalogowany. Mozesz zadeklarowac swoja preferowana postac.",
+    adminSectionTitle: "Admin",
+    userSectionTitle: "Moja deklaracja",
+    preferredAgentLabel: "Postac",
+    savePreferenceAction: "Zapisz deklaracje",
+    saveSettingsAction: "Zapisz info",
+    saveTeamAction: "Zapisz ekipe",
+    saveHistoryAction: "Zapisz historie",
+    addHistoryAction: "Dodaj mecz",
+    teamEditorTitle: "Ekipa i przypisane postacie",
+    historyEditorTitle: "Historia meczow",
+    scoreMaxLabel: "Maks",
+    scoreInfoLabel: "Opis progu",
+    opponentLabel: "Przeciwnik",
+    scoreLabel: "Wynik",
+    pointsLabel: "Punkty",
+    resultLabel: "Rezultat",
+    removeAction: "Usun",
+    reserveLabel: "Rezerwa",
+    saveSuccess: "Zmiany zapisane.",
+    saveFailed: "Nie udalo sie zapisac zmian.",
+    preferenceSaved: "Deklaracja zostala zapisana.",
+    dataLoadFailed: "Nie udalo sie pobrac danych z Supabase. Zostawiam aktualny widok strony."
   },
   en: {
     infoTitle: "Info",
@@ -1127,17 +1398,59 @@ const translations = {
     loginSignedAs: "Signed in as",
     logoutAction: "Sign out",
     logoutSuccess: "Signed out.",
-    authReady: "Connected to Supabase."
+    authReady: "Connected to Supabase.",
+    managementTitle: "Management",
+    managementGuestSubtitle: "Sign in to manage the site data or save your preferred agent.",
+    managementAdminSubtitle: "You have administrator access. Edit the data visible to everyone here.",
+    managementUserSubtitle: "You are signed in. You can declare your preferred agent here.",
+    adminSectionTitle: "Admin",
+    userSectionTitle: "My preference",
+    preferredAgentLabel: "Agent",
+    savePreferenceAction: "Save preference",
+    saveSettingsAction: "Save info",
+    saveTeamAction: "Save team",
+    saveHistoryAction: "Save history",
+    addHistoryAction: "Add match",
+    teamEditorTitle: "Team and assigned agents",
+    historyEditorTitle: "Match history",
+    scoreMaxLabel: "Max",
+    scoreInfoLabel: "Threshold description",
+    opponentLabel: "Opponent",
+    scoreLabel: "Score",
+    pointsLabel: "Points",
+    resultLabel: "Result",
+    removeAction: "Remove",
+    reserveLabel: "Reserve",
+    saveSuccess: "Changes saved.",
+    saveFailed: "Could not save changes.",
+    preferenceSaved: "Preference saved.",
+    dataLoadFailed: "Could not load data from Supabase. Keeping the current page view."
   }
 };
 
-const players = [
+let players = [
   { name: "Blushyk", agent: "Raze" },
   { name: "Gordon Ramsey", agent: "?" },
   { name: "Enosh Samira", agent: "Veto" },
   { name: "Licz1", agent: "?" },
   { name: "Mdzer", agent: "Jett" },
   { name: "Future", agent: "Rezerwa" }
+];
+const defaultSiteSettings = {
+  match_date: "04.04.2026",
+  match_time: "21:00 - 22:00",
+  matches_count: 2,
+  current_map: "LOTUS",
+  premier_score: 325,
+  premier_score_max: 600,
+  score_info: ""
+};
+let siteSettings = Object.assign({}, defaultSiteSettings);
+let historyMatches = [
+  { id: 1, map_name: "FRACTURE", opponent: "MISSINGSERVER", score: "13-15", points: "+25", result: "lose", sort_order: 0 },
+  { id: 2, map_name: "FRACTURE", opponent: "GOOFY GOOBERS", score: "13-11", points: "+100", result: "win", sort_order: 1 },
+  { id: 3, map_name: "HAVEN", opponent: "MONGORIA", score: "14-12", points: "+100", result: "win", sort_order: 2 },
+  { id: 4, map_name: "HAVEN", opponent: "WIESULIS", score: "13-07", points: "+100", result: "win", sort_order: 3 }
 ];
 const agentIcons = {
   "Astra": "agents/astra.png",
@@ -1221,6 +1534,35 @@ const themeToggle = document.getElementById("themeToggle");
 const themeToggleValue = document.getElementById("themeToggleValue");
 const languageToggle = document.getElementById("languageToggle");
 const languageToggleValue = document.getElementById("languageToggleValue");
+const managementPanel = document.getElementById("managementPanel");
+const managementSubtitle = document.getElementById("managementSubtitle");
+const adminPanel = document.getElementById("adminPanel");
+const userPanel = document.getElementById("userPanel");
+const adminStatus = document.getElementById("adminStatus");
+const userStatus = document.getElementById("userStatus");
+const infoDateValue = document.getElementById("infoDateValue");
+const infoTimeValue = document.getElementById("infoTimeValue");
+const infoMatchesValue = document.getElementById("infoMatchesValue");
+const infoMapValue = document.getElementById("infoMapValue");
+const premierScoreValue = document.getElementById("premierScoreValue");
+const premierScoreBar = document.getElementById("premierScoreBar");
+const scoreInfoText = document.getElementById("scoreInfoText");
+const historyContainer = document.getElementById("history-container");
+const adminMatchDate = document.getElementById("adminMatchDate");
+const adminMatchTime = document.getElementById("adminMatchTime");
+const adminMatchesCount = document.getElementById("adminMatchesCount");
+const adminCurrentMap = document.getElementById("adminCurrentMap");
+const adminPremierScore = document.getElementById("adminPremierScore");
+const adminPremierScoreMax = document.getElementById("adminPremierScoreMax");
+const adminScoreInfo = document.getElementById("adminScoreInfo");
+const saveSettingsButton = document.getElementById("saveSettingsButton");
+const playerEditors = document.getElementById("playerEditors");
+const savePlayersButton = document.getElementById("savePlayersButton");
+const historyEditors = document.getElementById("historyEditors");
+const addHistoryButton = document.getElementById("addHistoryButton");
+const saveHistoryButton = document.getElementById("saveHistoryButton");
+const preferredAgentSelect = document.getElementById("preferredAgentSelect");
+const savePreferenceButton = document.getElementById("savePreferenceButton");
 const loginButton = document.getElementById("loginButton");
 const authPanel = document.getElementById("authPanel");
 const authClose = document.getElementById("authClose");
@@ -1237,6 +1579,9 @@ const pageTitle = document.getElementById("pageTitle");
 const settingsStorageKeys = ["eter-theme", "eter-language", "eter-dashboard-layout-v1"];
 let currentLanguage = localStorage.getItem("eter-language") || "pl";
 let currentMapName = null;
+let currentProfile = null;
+let currentPreference = null;
+let currentRole = "guest";
 
 function setAuthStatus(message) {
   authStatus.textContent = message;
@@ -1291,11 +1636,188 @@ function updateHistoryToggleLabel() {
   historyButton.innerHTML = `${actionLabel} <span class="expand-arrow${hiddenRows.length === 0 ? " rotated" : ""}">▼</span>`;
 }
 
+function getScoreInfoText() {
+  return siteSettings.score_info || translations[currentLanguage].scoreInfo;
+}
+
+function getAgentChoices(includeReserve) {
+  return Object.keys(agentIcons).filter((agent) => includeReserve || agent !== "Rezerwa");
+}
+
+function populateSelectOptions(selectElement, options, selectedValue) {
+  selectElement.innerHTML = "";
+  options.forEach((value) => {
+    const option = document.createElement("option");
+    option.value = value;
+    option.textContent = value;
+    if (value === selectedValue) {
+      option.selected = true;
+    }
+    selectElement.appendChild(option);
+  });
+}
+
+function renderSiteSettings() {
+  infoDateValue.textContent = siteSettings.match_date || defaultSiteSettings.match_date;
+  infoTimeValue.textContent = siteSettings.match_time || defaultSiteSettings.match_time;
+  infoMatchesValue.textContent = siteSettings.matches_count != null ? String(siteSettings.matches_count) : String(defaultSiteSettings.matches_count);
+  infoMapValue.textContent = siteSettings.current_map || defaultSiteSettings.current_map;
+  premierScoreValue.textContent = `${siteSettings.premier_score || 0} / ${siteSettings.premier_score_max || 0}`;
+
+  const maxScore = Number(siteSettings.premier_score_max) || 1;
+  const currentScore = Number(siteSettings.premier_score) || 0;
+  const progressWidth = Math.max(0, Math.min(100, (currentScore / maxScore) * 100));
+  premierScoreBar.style.width = `${progressWidth}%`;
+  scoreInfoText.textContent = getScoreInfoText();
+}
+
+function renderHistory() {
+  historyContainer.innerHTML = "";
+
+  historyMatches
+    .slice()
+    .sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0))
+    .forEach((match, index) => {
+      const row = document.createElement("div");
+      row.className = `history-row${index > 2 ? " history-hidden" : ""}`;
+      row.dataset.result = match.result || "win";
+      row.dataset.index = String(index);
+      row.innerHTML = `
+        <div class="history-map">${match.map_name || ""}</div>
+        <div class="history-opponent">vs ${match.opponent || ""}</div>
+        <div class="history-score">${match.score || ""}</div>
+        <div class="history-points">${match.points || ""}</div>
+      `;
+      historyContainer.appendChild(row);
+    });
+
+  updateHistoryToggleLabel();
+}
+
+function renderPreferencePanel() {
+  const fallbackAgent = players.length > 0 ? players[0].agent : "Raze";
+  populateSelectOptions(preferredAgentSelect, getAgentChoices(false), currentPreference || fallbackAgent || "Raze");
+}
+
+function renderPlayerEditors() {
+  playerEditors.innerHTML = "";
+
+  players.forEach((player) => {
+    const row = document.createElement("div");
+    row.className = "editor-row";
+    row.dataset.playerId = player.id != null ? String(player.id) : "";
+    row.dataset.playerName = player.name;
+    row.innerHTML = `
+      <div class="editor-row-meta">
+        <div class="editor-row-title">${player.name}</div>
+        <div class="editor-row-note">${player.name === "Future" ? translations[currentLanguage].reserveLabel : player.agent}</div>
+      </div>
+      <div class="editor-field">
+        <label class="editor-label">${translations[currentLanguage].preferredAgentLabel}</label>
+        <select class="editor-select player-agent-select"></select>
+      </div>
+      <div class="editor-field">
+        <label class="editor-label">${translations[currentLanguage].reserveLabel}</label>
+        <select class="editor-select player-reserve-select">
+          <option value="false">No</option>
+          <option value="true">Yes</option>
+        </select>
+      </div>
+    `;
+
+    const agentSelect = row.querySelector(".player-agent-select");
+    const reserveSelect = row.querySelector(".player-reserve-select");
+    populateSelectOptions(agentSelect, getAgentChoices(true), player.agent || "?");
+    reserveSelect.value = player.is_reserve ? "true" : "false";
+    playerEditors.appendChild(row);
+  });
+}
+
+function createHistoryEditorRow(match) {
+  const row = document.createElement("div");
+  row.className = "editor-row history-editor";
+  row.dataset.historyId = match.id != null ? String(match.id) : "";
+  row.innerHTML = `
+    <div class="editor-field">
+      <label class="editor-label">${translations[currentLanguage].mapLabel}</label>
+      <select class="editor-select history-map-input"></select>
+    </div>
+    <div class="editor-field">
+      <label class="editor-label">${translations[currentLanguage].opponentLabel}</label>
+      <input class="editor-input history-opponent-input" type="text" value="${match.opponent || ""}">
+    </div>
+    <div class="editor-field">
+      <label class="editor-label">${translations[currentLanguage].scoreLabel}</label>
+      <input class="editor-input history-score-input" type="text" value="${match.score || ""}">
+    </div>
+    <div class="editor-field">
+      <label class="editor-label">${translations[currentLanguage].pointsLabel}</label>
+      <input class="editor-input history-points-input" type="text" value="${match.points || ""}">
+    </div>
+    <div class="editor-field">
+      <label class="editor-label">${translations[currentLanguage].resultLabel}</label>
+      <select class="editor-select history-result-input">
+        <option value="win">Win</option>
+        <option value="lose">Lose</option>
+      </select>
+    </div>
+    <button class="management-btn danger history-remove-button" type="button">${translations[currentLanguage].removeAction}</button>
+  `;
+
+  populateSelectOptions(row.querySelector(".history-map-input"), Object.keys(mapImages), match.map_name || siteSettings.current_map || "LOTUS");
+  row.querySelector(".history-result-input").value = match.result || "win";
+  row.querySelector(".history-remove-button").addEventListener("click", () => {
+    row.remove();
+  });
+
+  return row;
+}
+
+function renderHistoryEditors() {
+  historyEditors.innerHTML = "";
+
+  historyMatches
+    .slice()
+    .sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0))
+    .forEach((match) => {
+      historyEditors.appendChild(createHistoryEditorRow(match));
+    });
+}
+
+function renderManagementPanels() {
+  managementPanel.hidden = currentRole === "guest";
+  adminPanel.hidden = currentRole !== "admin";
+  userPanel.hidden = currentRole === "guest" || currentRole === "admin";
+
+  if (currentRole === "admin") {
+    managementSubtitle.textContent = translations[currentLanguage].managementAdminSubtitle;
+    adminMatchDate.value = siteSettings.match_date || "";
+    adminMatchTime.value = siteSettings.match_time || "";
+    adminMatchesCount.value = siteSettings.matches_count != null ? String(siteSettings.matches_count) : "";
+    adminPremierScore.value = siteSettings.premier_score != null ? String(siteSettings.premier_score) : "";
+    adminPremierScoreMax.value = siteSettings.premier_score_max != null ? String(siteSettings.premier_score_max) : "";
+    adminScoreInfo.value = getScoreInfoText();
+    populateSelectOptions(adminCurrentMap, Object.keys(mapImages), siteSettings.current_map || "LOTUS");
+    renderPlayerEditors();
+    renderHistoryEditors();
+  } else if (currentRole === "user") {
+    managementSubtitle.textContent = translations[currentLanguage].managementUserSubtitle;
+    renderPreferencePanel();
+  } else {
+    managementSubtitle.textContent = translations[currentLanguage].managementGuestSubtitle;
+  }
+}
+
+function handleCurrentMapClick(event) {
+  const mapName = siteSettings.current_map || infoMapValue.textContent || defaultSiteSettings.current_map;
+  showMap(event, mapName);
+}
+
 function renderTeam() {
   team.innerHTML = "";
 
   players.forEach((p) => {
-    const isReserve = p.name === "Future";
+    const isReserve = Boolean(p.is_reserve) || p.name === "Future";
     const el = document.createElement("div");
     el.className = "player";
     el.innerHTML = `
@@ -1351,7 +1873,10 @@ function applyLanguage(language) {
     document.getElementById("mapTitle").textContent = `${translations[language].mapTitlePrefix}: ${currentMapName}`;
   }
 
+  renderSiteSettings();
   renderTeam();
+  renderHistory();
+  renderManagementPanels();
   updateHistoryToggleLabel();
   applyTheme(document.body.classList.contains("light-theme") ? "light" : "dark");
   updateAuthUi();
@@ -1398,20 +1923,79 @@ refreshConfirmBtn.addEventListener("click", () => {
 });
 
 updateAuthUi();
+renderSiteSettings();
 renderTeam();
+renderHistory();
+renderManagementPanels();
 window.eterApp = {
   translations,
   getCurrentLanguage: function () {
     return currentLanguage;
   },
+  setCurrentRole: function (role) {
+    currentRole = role;
+  },
+  setCurrentProfile: function (profile) {
+    currentProfile = profile;
+  },
+  setCurrentPreference: function (preference) {
+    currentPreference = preference;
+  },
+  getCurrentUserContext: function () {
+    return {
+      role: currentRole,
+      profile: currentProfile,
+      preference: currentPreference
+    };
+  },
+  setSiteSettings: function (nextSettings) {
+    siteSettings = Object.assign({}, siteSettings, nextSettings || {});
+    renderSiteSettings();
+    renderManagementPanels();
+  },
+  setPlayers: function (nextPlayers) {
+    players = nextPlayers && nextPlayers.length ? nextPlayers : players;
+    renderTeam();
+    renderManagementPanels();
+  },
+  setHistoryMatches: function (nextHistory) {
+    historyMatches = nextHistory && nextHistory.length ? nextHistory : [];
+    renderHistory();
+    renderManagementPanels();
+  },
   setAuthStatus,
   updateAuthUi,
   hideAuthPanel,
   elements: {
+    managementPanel,
+    managementSubtitle,
+    adminPanel,
+    userPanel,
+    adminStatus,
+    userStatus,
+    adminMatchDate,
+    adminMatchTime,
+    adminMatchesCount,
+    adminCurrentMap,
+    adminPremierScore,
+    adminPremierScoreMax,
+    adminScoreInfo,
+    saveSettingsButton,
+    playerEditors,
+    savePlayersButton,
+    historyEditors,
+    addHistoryButton,
+    saveHistoryButton,
+    preferredAgentSelect,
+    savePreferenceButton,
     loginButton,
     authForm,
     loginInput,
     passwordInput
+  },
+  helpers: {
+    renderManagementPanels,
+    createHistoryEditorRow
   }
 };
 
@@ -1431,7 +2015,7 @@ window.addEventListener("click", (e) => {
   }
 });
 
-const mapImages = {
+var mapImages = {
   "ASCENT": "maps/ascent.png",
   "BIND": "maps/bind.png",
   "BREEZE": "maps/breeze.png",
@@ -1512,10 +2096,24 @@ function toggleHistory() {
   const submitButtonLabel = app.elements.authForm.querySelector("[data-i18n='loginAction']");
   let authClient = null;
   let currentUser = null;
+  let currentProfile = null;
+  let currentRole = "guest";
+  let currentPreference = null;
+  let cachedSiteSettings = null;
+  let cachedPlayers = [];
+  let cachedHistory = [];
 
   function getMessages() {
     const language = app.getCurrentLanguage();
     return app.translations[language] || app.translations.pl;
+  }
+
+  function setAdminStatus(message) {
+    app.elements.adminStatus.textContent = message || "";
+  }
+
+  function setUserStatus(message) {
+    app.elements.userStatus.textContent = message || "";
   }
 
   function normalizeLoginToEmail(login) {
@@ -1524,6 +2122,10 @@ function toggleHistory() {
 
   function syncUi() {
     const messages = getMessages();
+    app.setCurrentRole(currentRole);
+    app.setCurrentProfile(currentProfile);
+    app.setCurrentPreference(currentPreference);
+    app.helpers.renderManagementPanels();
 
     if (currentUser && currentUser.email) {
       const loginName = currentUser.email.split("@")[0];
@@ -1544,6 +2146,92 @@ function toggleHistory() {
     app.elements.passwordInput.disabled = false;
   }
 
+  async function fetchPublicData() {
+    if (!authClient) {
+      return;
+    }
+
+    try {
+      const settingsResult = await authClient
+        .from("site_settings")
+        .select("*")
+        .eq("id", 1)
+        .single();
+
+      if (!settingsResult.error && settingsResult.data) {
+        cachedSiteSettings = settingsResult.data;
+        app.setSiteSettings(settingsResult.data);
+      }
+
+      const playersResult = await authClient
+        .from("player_assignments")
+        .select("*")
+        .order("id", { ascending: true });
+
+      if (!playersResult.error && playersResult.data) {
+        cachedPlayers = playersResult.data.map(function (row) {
+          return {
+            id: row.id,
+            name: row.player_name,
+            agent: row.current_agent || "?",
+            is_reserve: row.is_reserve
+          };
+        });
+        app.setPlayers(cachedPlayers);
+      }
+
+      const historyResult = await authClient
+        .from("match_history")
+        .select("*")
+        .order("sort_order", { ascending: true });
+
+      if (!historyResult.error && historyResult.data) {
+        cachedHistory = historyResult.data;
+        app.setHistoryMatches(cachedHistory);
+      }
+    } catch (_error) {
+      app.setAuthStatus(getMessages().dataLoadFailed);
+    }
+  }
+
+  async function loadUserContext() {
+    currentProfile = null;
+    currentPreference = null;
+    currentRole = currentUser ? "user" : "guest";
+
+    if (!authClient || !currentUser) {
+      syncUi();
+      return;
+    }
+
+    try {
+      const profileResult = await authClient
+        .from("profiles")
+        .select("*")
+        .eq("id", currentUser.id)
+        .single();
+
+      if (!profileResult.error && profileResult.data) {
+        currentProfile = profileResult.data;
+        currentRole = profileResult.data.role === "admin" ? "admin" : "user";
+      }
+
+      const preferenceResult = await authClient
+        .from("player_preferences")
+        .select("*")
+        .eq("user_id", currentUser.id)
+        .maybeSingle();
+
+      if (!preferenceResult.error && preferenceResult.data) {
+        currentPreference = preferenceResult.data.preferred_agent;
+      }
+    } catch (_error) {
+      currentRole = currentUser ? "user" : "guest";
+    }
+
+    syncUi();
+  }
+
   async function restoreSession() {
     if (!authClient) {
       syncUi();
@@ -1557,7 +2245,208 @@ function toggleHistory() {
       currentUser = null;
     }
 
+    await fetchPublicData();
+    await loadUserContext();
     syncUi();
+  }
+
+  function readAdminSettingsForm() {
+    return {
+      id: 1,
+      match_date: app.elements.adminMatchDate.value.trim(),
+      match_time: app.elements.adminMatchTime.value.trim(),
+      matches_count: Number(app.elements.adminMatchesCount.value || 0),
+      current_map: app.elements.adminCurrentMap.value,
+      premier_score: Number(app.elements.adminPremierScore.value || 0),
+      premier_score_max: Number(app.elements.adminPremierScoreMax.value || 0),
+      score_info: app.elements.adminScoreInfo.value.trim()
+    };
+  }
+
+  function readPlayerEditors() {
+    return Array.from(app.elements.playerEditors.querySelectorAll(".editor-row")).map(function (row) {
+      return {
+        id: row.dataset.playerId ? Number(row.dataset.playerId) : null,
+        player_name: row.dataset.playerName,
+        current_agent: row.querySelector(".player-agent-select").value,
+        is_reserve: row.querySelector(".player-reserve-select").value === "true"
+      };
+    });
+  }
+
+  function readHistoryEditors() {
+    return Array.from(app.elements.historyEditors.querySelectorAll(".history-editor")).map(function (row, index) {
+      return {
+        id: row.dataset.historyId ? Number(row.dataset.historyId) : null,
+        map_name: row.querySelector(".history-map-input").value,
+        opponent: row.querySelector(".history-opponent-input").value.trim(),
+        score: row.querySelector(".history-score-input").value.trim(),
+        points: row.querySelector(".history-points-input").value.trim(),
+        result: row.querySelector(".history-result-input").value,
+        sort_order: index
+      };
+    });
+  }
+
+  async function saveSettings() {
+    const messages = getMessages();
+    setAdminStatus("");
+
+    try {
+      const payload = readAdminSettingsForm();
+      const result = await authClient
+        .from("site_settings")
+        .upsert(payload)
+        .select()
+        .single();
+
+      if (result.error) {
+        setAdminStatus(result.error.message || messages.saveFailed);
+        return;
+      }
+
+      cachedSiteSettings = result.data;
+      app.setSiteSettings(result.data);
+      setAdminStatus(messages.saveSuccess);
+    } catch (_error) {
+      setAdminStatus(messages.saveFailed);
+    }
+  }
+
+  async function savePlayers() {
+    const messages = getMessages();
+    setAdminStatus("");
+
+    try {
+      const editedPlayers = readPlayerEditors();
+
+      for (let i = 0; i < editedPlayers.length; i += 1) {
+        const player = editedPlayers[i];
+        let result;
+
+        if (player.id) {
+          result = await authClient
+            .from("player_assignments")
+            .update({
+              current_agent: player.current_agent,
+              is_reserve: player.is_reserve
+            })
+            .eq("id", player.id)
+            .select()
+            .single();
+        } else {
+          result = await authClient
+            .from("player_assignments")
+            .insert(player)
+            .select()
+            .single();
+        }
+
+        if (result.error) {
+          setAdminStatus(result.error.message || messages.saveFailed);
+          return;
+        }
+      }
+
+      await fetchPublicData();
+      setAdminStatus(messages.saveSuccess);
+    } catch (_error) {
+      setAdminStatus(messages.saveFailed);
+    }
+  }
+
+  async function saveHistory() {
+    const messages = getMessages();
+    setAdminStatus("");
+
+    try {
+      const editedHistory = readHistoryEditors();
+      const existingIds = cachedHistory.filter(function (item) { return item.id != null; }).map(function (item) { return item.id; });
+      const editedIds = editedHistory.filter(function (item) { return item.id != null; }).map(function (item) { return item.id; });
+      const idsToDelete = existingIds.filter(function (id) { return editedIds.indexOf(id) === -1; });
+
+      if (idsToDelete.length) {
+        const deleteResult = await authClient
+          .from("match_history")
+          .delete()
+          .in("id", idsToDelete);
+
+        if (deleteResult.error) {
+          setAdminStatus(deleteResult.error.message || messages.saveFailed);
+          return;
+        }
+      }
+
+      for (let i = 0; i < editedHistory.length; i += 1) {
+        const match = editedHistory[i];
+        let result;
+
+        if (match.id) {
+          result = await authClient
+            .from("match_history")
+            .update({
+              map_name: match.map_name,
+              opponent: match.opponent,
+              score: match.score,
+              points: match.points,
+              result: match.result,
+              sort_order: match.sort_order
+            })
+            .eq("id", match.id)
+            .select()
+            .single();
+        } else {
+          result = await authClient
+            .from("match_history")
+            .insert(match)
+            .select()
+            .single();
+        }
+
+        if (result.error) {
+          setAdminStatus(result.error.message || messages.saveFailed);
+          return;
+        }
+      }
+
+      await fetchPublicData();
+      setAdminStatus(messages.saveSuccess);
+    } catch (_error) {
+      setAdminStatus(messages.saveFailed);
+    }
+  }
+
+  async function savePreference() {
+    const messages = getMessages();
+    setUserStatus("");
+
+    if (!currentUser) {
+      setUserStatus(messages.loginPendingInfo);
+      return;
+    }
+
+    try {
+      const result = await authClient
+        .from("player_preferences")
+        .upsert({
+          user_id: currentUser.id,
+          preferred_agent: app.elements.preferredAgentSelect.value
+        }, { onConflict: "user_id" })
+        .select()
+        .single();
+
+      if (result.error) {
+        setUserStatus(result.error.message || messages.saveFailed);
+        return;
+      }
+
+      currentPreference = result.data.preferred_agent;
+      app.setCurrentPreference(currentPreference);
+      app.helpers.renderManagementPanels();
+      setUserStatus(messages.preferenceSaved);
+    } catch (_error) {
+      setUserStatus(messages.saveFailed);
+    }
   }
 
   window.eterSyncAuthUi = syncUi;
@@ -1574,8 +2463,13 @@ function toggleHistory() {
       try {
         await authClient.auth.signOut();
         currentUser = null;
+        currentProfile = null;
+        currentPreference = null;
+        currentRole = "guest";
         syncUi();
         app.setAuthStatus(messages.logoutSuccess);
+        setAdminStatus("");
+        setUserStatus("");
       } catch (_error) {
         app.setAuthStatus(messages.loginPendingInfo);
       }
@@ -1608,6 +2502,7 @@ function toggleHistory() {
         : result.data && result.data.session
           ? result.data.session.user
           : null;
+      await loadUserContext();
       syncUi();
       app.setAuthStatus(messages.loginSuccess);
       app.hideAuthPanel();
@@ -1621,8 +2516,9 @@ function toggleHistory() {
       authClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 
       if (authClient && authClient.auth && authClient.auth.onAuthStateChange) {
-        authClient.auth.onAuthStateChange(function (_event, session) {
+        authClient.auth.onAuthStateChange(async function (_event, session) {
           currentUser = session ? session.user : null;
+          await loadUserContext();
           syncUi();
         });
       }
@@ -1630,6 +2526,44 @@ function toggleHistory() {
   } catch (_error) {
     authClient = null;
   }
+
+  app.elements.saveSettingsButton.addEventListener("click", function () {
+    if (currentRole === "admin") {
+      saveSettings();
+    }
+  });
+
+  app.elements.savePlayersButton.addEventListener("click", function () {
+    if (currentRole === "admin") {
+      savePlayers();
+    }
+  });
+
+  app.elements.addHistoryButton.addEventListener("click", function () {
+    if (currentRole !== "admin") {
+      return;
+    }
+
+    app.elements.historyEditors.appendChild(app.helpers.createHistoryEditorRow({
+      map_name: cachedSiteSettings && cachedSiteSettings.current_map ? cachedSiteSettings.current_map : "LOTUS",
+      opponent: "",
+      score: "",
+      points: "",
+      result: "win"
+    }));
+  });
+
+  app.elements.saveHistoryButton.addEventListener("click", function () {
+    if (currentRole === "admin") {
+      saveHistory();
+    }
+  });
+
+  app.elements.savePreferenceButton.addEventListener("click", function () {
+    if (currentRole === "user") {
+      savePreference();
+    }
+  });
 
   restoreSession();
 })();
