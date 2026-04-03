@@ -1612,6 +1612,16 @@ function showAuthPanel(event) {
   hideRefreshConfirm();
   authPanel.classList.add("active");
 }
+window.showAuthPanel = showAuthPanel;
+
+function handleLoginButtonClick(event) {
+  if (typeof window.eterHandleLoginButtonClick === "function") {
+    window.eterHandleLoginButtonClick(event);
+    return;
+  }
+
+  showAuthPanel(event);
+}
 
 function hideRefreshConfirm() {
   refreshConfirm.classList.remove("active");
@@ -1903,7 +1913,7 @@ languageToggle.addEventListener("click", () => {
   applyLanguage(nextLanguage);
 });
 
-loginButton.addEventListener("click", showAuthPanel);
+loginButton.addEventListener("click", handleLoginButtonClick);
 authClose.addEventListener("click", hideAuthPanel);
 authForm.addEventListener("submit", (event) => {
   if (typeof window.eterHandleAuthSubmit === "function") {
@@ -2086,6 +2096,7 @@ function toggleHistory() {
   const SUPABASE_URL = "https://bhufgplssyhpkxtyfwwh.supabase.co";
   const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_nDhdGaJApbYuGtTblHo2AQ_AbVlT2G7";
   const LOGIN_EMAIL_DOMAIN = "eter.gg";
+  const SUPABASE_FALLBACK_SRC = "https://unpkg.com/@supabase/supabase-js@2";
   const app = window.eterApp;
 
   if (!app) {
@@ -2450,6 +2461,34 @@ function toggleHistory() {
   }
 
   window.eterSyncAuthUi = syncUi;
+  window.eterHandleLoginButtonClick = async function (event) {
+    if (event) {
+      event.stopPropagation();
+    }
+
+    if (currentUser) {
+      const messages = getMessages();
+
+      try {
+        await authClient.auth.signOut();
+        currentUser = null;
+        currentProfile = null;
+        currentPreference = null;
+        currentRole = "guest";
+        syncUi();
+        app.setAuthStatus(messages.logoutSuccess);
+        setAdminStatus("");
+        setUserStatus("");
+      } catch (_error) {
+        app.setAuthStatus(messages.loginFailed);
+      }
+      return;
+    }
+
+    if (typeof window.showAuthPanel === "function") {
+      window.showAuthPanel(event);
+    }
+  };
   window.eterHandleAuthSubmit = async function (event) {
     event.preventDefault();
     const messages = getMessages();
@@ -2511,20 +2550,47 @@ function toggleHistory() {
     }
   };
 
-  try {
-    if (window.supabase && window.supabase.createClient) {
-      authClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
-
-      if (authClient && authClient.auth && authClient.auth.onAuthStateChange) {
-        authClient.auth.onAuthStateChange(async function (_event, session) {
-          currentUser = session ? session.user : null;
-          await loadUserContext();
-          syncUi();
-        });
-      }
+  function attachAuthListeners() {
+    if (authClient && authClient.auth && authClient.auth.onAuthStateChange) {
+      authClient.auth.onAuthStateChange(async function (_event, session) {
+        currentUser = session ? session.user : null;
+        await loadUserContext();
+        syncUi();
+      });
     }
-  } catch (_error) {
-    authClient = null;
+  }
+
+  function initializeAuthClient() {
+    try {
+      if (window.supabase && window.supabase.createClient) {
+        authClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+        attachAuthListeners();
+        return true;
+      }
+    } catch (_error) {
+      authClient = null;
+    }
+
+    return false;
+  }
+
+  function loadFallbackClient() {
+    return new Promise(function (resolve) {
+      const existingScript = document.querySelector('script[data-supabase-fallback="true"]');
+      if (existingScript) {
+        existingScript.addEventListener("load", function () { resolve(true); }, { once: true });
+        existingScript.addEventListener("error", function () { resolve(false); }, { once: true });
+        return;
+      }
+
+      const script = document.createElement("script");
+      script.src = SUPABASE_FALLBACK_SRC;
+      script.async = true;
+      script.dataset.supabaseFallback = "true";
+      script.onload = function () { resolve(true); };
+      script.onerror = function () { resolve(false); };
+      document.head.appendChild(script);
+    });
   }
 
   app.elements.saveSettingsButton.addEventListener("click", function () {
@@ -2565,7 +2631,14 @@ function toggleHistory() {
     }
   });
 
-  restoreSession();
+  (async function bootstrapAuth() {
+    if (!initializeAuthClient()) {
+      await loadFallbackClient();
+      initializeAuthClient();
+    }
+
+    restoreSession();
+  })();
 })();
 </script>
 
