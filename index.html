@@ -723,6 +723,10 @@ body.light-theme .player-badge {
   color: var(--muted-text);
 }
 
+.auth-status[hidden] {
+  display: none;
+}
+
 .auth-actions {
   display: flex;
   justify-content: flex-end;
@@ -999,6 +1003,10 @@ body.light-theme .player-badge {
 .control-action.login-button {
   padding-left: 16px;
   padding-right: 16px;
+}
+
+.control-action.edit-button[hidden] {
+  display: none;
 }
 
 .control-action.refresh-button {
@@ -1290,6 +1298,12 @@ body.light-theme .player-name {
         <label class="auth-label" for="passwordInput" data-i18n="passwordLabel">Haslo</label>
         <input class="auth-input" id="passwordInput" name="password" type="password" autocomplete="current-password" placeholder="••••••••">
       </div>
+      <div class="auth-field">
+        <label style="display:flex; align-items:center; gap:10px; font-size:14px; color:var(--muted-text);">
+          <input id="rememberMeInput" type="checkbox">
+          <span data-i18n="rememberMeLabel">Zapamietaj mnie</span>
+        </label>
+      </div>
       <div class="auth-actions">
         <button class="auth-submit" type="submit"><span id="authSubmitLabel">Zaloguj</span></button>
       </div>
@@ -1309,6 +1323,12 @@ body.light-theme .player-name {
     <span class="theme-toggle-text">
       <span class="theme-toggle-label" data-i18n="loginTitle">Logowanie</span>
       <span class="language-value" id="loginButtonState">Login</span>
+    </span>
+  </button>
+  <button class="control-action edit-button" id="editButton" type="button" aria-label="Edytuj" hidden>
+    <span class="theme-toggle-text">
+      <span class="theme-toggle-label" data-i18n="editLabel">Panel</span>
+      <span class="language-value" data-i18n="editShort">Edytuj</span>
     </span>
   </button>
   <button class="control-action theme-toggle" id="themeToggle" type="button" aria-label="Przelacz motyw">
@@ -1362,6 +1382,7 @@ const translations = {
     loginSubtitle: "Zaloguj sie swoim loginem i haslem.",
     loginLabel: "Login",
     passwordLabel: "Haslo",
+    rememberMeLabel: "Zapamietaj mnie",
     loginAction: "Zaloguj",
     loginPendingInfo: "Panel logowania jest przygotowany. Podpiecie Supabase zrobimy w kolejnym kroku.",
     loginSigningIn: "Logowanie...",
@@ -1373,6 +1394,8 @@ const translations = {
     logoutSuccess: "Wylogowano.",
     authReady: "Polaczono z Supabase.",
     authChecking: "Sprawdzam sesje...",
+    editLabel: "Panel",
+    editShort: "Edytuj",
     managementTitle: "Panel zarzadzania",
     managementGuestSubtitle: "Zaloguj sie, aby zarzadzac danymi strony lub zapisac swoja preferowana postac.",
     managementAdminSubtitle: "Masz uprawnienia administratora. Tutaj edytujesz dane widoczne dla wszystkich.",
@@ -1432,6 +1455,7 @@ const translations = {
     loginSubtitle: "Sign in with your login and password.",
     loginLabel: "Login",
     passwordLabel: "Password",
+    rememberMeLabel: "Remember me",
     loginAction: "Sign in",
     loginPendingInfo: "The login panel is ready. We will connect Supabase in the next step.",
     loginSigningIn: "Signing in...",
@@ -1443,6 +1467,8 @@ const translations = {
     logoutSuccess: "Signed out.",
     authReady: "Connected to Supabase.",
     authChecking: "Checking session...",
+    editLabel: "Panel",
+    editShort: "Edit",
     managementTitle: "Management",
     managementGuestSubtitle: "Sign in to manage the site data or save your preferred agent.",
     managementAdminSubtitle: "You have administrator access. Edit the data visible to everyone here.",
@@ -1608,6 +1634,7 @@ const saveHistoryButton = document.getElementById("saveHistoryButton");
 const preferredAgentSelect = document.getElementById("preferredAgentSelect");
 const savePreferenceButton = document.getElementById("savePreferenceButton");
 const loginButton = document.getElementById("loginButton");
+const editButton = document.getElementById("editButton");
 const authPanel = document.getElementById("authPanel");
 const authClose = document.getElementById("authClose");
 const authForm = document.getElementById("authForm");
@@ -1620,6 +1647,7 @@ const authLogoutButton = document.getElementById("authLogoutButton");
 const loginButtonState = document.getElementById("loginButtonState");
 const loginInput = document.getElementById("loginInput");
 const passwordInput = document.getElementById("passwordInput");
+const rememberMeInput = document.getElementById("rememberMeInput");
 const refreshButton = document.getElementById("refreshButton");
 const refreshConfirm = document.getElementById("refreshConfirm");
 const refreshCancel = document.getElementById("refreshCancel");
@@ -1648,9 +1676,13 @@ function updateAuthUi() {
   loginButtonState.textContent = translations[currentLanguage].loginShort;
   authSubmitLabel.textContent = translations[currentLanguage].loginAction;
   authLogoutButton.textContent = translations[currentLanguage].logoutAction;
+  editButton.setAttribute("aria-label", translations[currentLanguage].editShort);
   authCredentials.hidden = false;
   authSignedIn.hidden = true;
+  authStatus.hidden = false;
   authSignedInStatus.textContent = "";
+  editButton.hidden = true;
+  managementPanel.hidden = true;
   loginInput.disabled = false;
   passwordInput.disabled = false;
 }
@@ -1675,6 +1707,20 @@ function handleLoginButtonClick(event) {
   }
 
   showAuthPanel(event);
+}
+
+function toggleManagementPanel(event) {
+  if (event) {
+    event.stopPropagation();
+  }
+
+  if (managementPanel.hidden) {
+    managementPanel.hidden = false;
+    managementPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+    return;
+  }
+
+  managementPanel.hidden = true;
 }
 
 function hideRefreshConfirm() {
@@ -1849,7 +1895,6 @@ function renderHistoryEditors() {
 }
 
 function renderManagementPanels() {
-  managementPanel.hidden = currentRole === "guest";
   adminPanel.hidden = currentRole !== "admin";
   userPanel.hidden = currentRole === "guest" || currentRole === "admin";
 
@@ -1968,6 +2013,7 @@ languageToggle.addEventListener("click", () => {
 });
 
 loginButton.addEventListener("click", handleLoginButtonClick);
+editButton.addEventListener("click", toggleManagementPanel);
 authClose.addEventListener("click", hideAuthPanel);
 authForm.addEventListener("submit", (event) => {
   if (typeof window.eterHandleAuthSubmit === "function") {
@@ -2053,6 +2099,7 @@ window.eterApp = {
     preferredAgentSelect,
     savePreferenceButton,
     loginButton,
+    editButton,
     loginButtonState,
     authForm,
     authCredentials,
@@ -2062,7 +2109,8 @@ window.eterApp = {
     authSubmitLabel,
     authLogoutButton,
     loginInput,
-    passwordInput
+    passwordInput,
+    rememberMeInput
   },
   helpers: {
     renderManagementPanels,
@@ -2158,6 +2206,9 @@ function toggleHistory() {
   const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_nDhdGaJApbYuGtTblHo2AQ_AbVlT2G7";
   const LOGIN_EMAIL_DOMAIN = "eter.gg";
   const SUPABASE_FALLBACK_SRC = "https://unpkg.com/@supabase/supabase-js@2";
+  const ADMIN_LOGIN_FALLBACKS = ["admin", "blushyk"];
+  const REMEMBER_ME_KEY = "eter-remember-me";
+  const SESSION_ACTIVE_KEY = "eter-session-active";
   const app = window.eterApp;
 
   if (!app) {
@@ -2194,6 +2245,11 @@ function toggleHistory() {
     return login.trim().toLowerCase() + "@" + LOGIN_EMAIL_DOMAIN;
   }
 
+  function isFallbackAdmin(user) {
+    const loginName = user && user.email ? user.email.split("@")[0].toLowerCase() : "";
+    return ADMIN_LOGIN_FALLBACKS.indexOf(loginName) !== -1;
+  }
+
   function syncUi() {
     const messages = getMessages();
     app.setCurrentRole(roleResolved ? currentRole : "guest");
@@ -2205,12 +2261,14 @@ function toggleHistory() {
 
     if (currentUser && currentUser.email) {
       const loginName = currentUser.email.split("@")[0];
-      app.setAuthStatus(messages.loginSignedAs + " " + loginName + ".");
+      app.setAuthStatus("");
       submitButtonLabel.textContent = messages.loginAction;
       app.elements.authLogoutButton.textContent = messages.logoutAction;
       app.elements.authCredentials.hidden = true;
       app.elements.authSignedIn.hidden = false;
+      app.elements.authStatus.hidden = true;
       app.elements.authSignedInStatus.textContent = messages.loginSignedAs + " " + loginName + ".";
+      app.elements.editButton.hidden = false;
       app.elements.loginInput.value = loginName;
       app.elements.loginInput.disabled = false;
       app.elements.passwordInput.value = "";
@@ -2223,9 +2281,40 @@ function toggleHistory() {
     app.elements.authLogoutButton.textContent = messages.logoutAction;
     app.elements.authCredentials.hidden = false;
     app.elements.authSignedIn.hidden = true;
+    app.elements.authStatus.hidden = false;
     app.elements.authSignedInStatus.textContent = "";
+    app.elements.editButton.hidden = true;
+    app.elements.managementPanel.hidden = true;
     app.elements.loginInput.disabled = false;
     app.elements.passwordInput.disabled = false;
+  }
+
+  async function performSignOut(messages) {
+    const text = messages || getMessages();
+
+    if (authClient) {
+      try {
+        await authClient.auth.signOut();
+      } catch (_error) {
+      }
+    }
+
+    currentUser = null;
+    currentProfile = null;
+    currentPreference = null;
+    currentRole = "guest";
+    roleResolved = true;
+    authChecking = false;
+    localStorage.removeItem(REMEMBER_ME_KEY);
+    sessionStorage.removeItem(SESSION_ACTIVE_KEY);
+    app.setCurrentRole("guest");
+    app.setCurrentProfile(null);
+    app.setCurrentPreference(null);
+    syncUi();
+    app.setAuthStatus(text.logoutSuccess);
+    setAdminStatus("");
+    setUserStatus("");
+    app.elements.managementPanel.hidden = true;
   }
 
   async function fetchPublicData() {
@@ -2298,8 +2387,7 @@ function toggleHistory() {
         currentProfile = profileResult.data;
         currentRole = profileResult.data.role === "admin" ? "admin" : "user";
       } else {
-        const loginName = currentUser.email ? currentUser.email.split("@")[0].toLowerCase() : "";
-        currentRole = loginName.indexOf("admin") !== -1 ? "admin" : "user";
+        currentRole = isFallbackAdmin(currentUser) ? "admin" : "user";
       }
 
       const preferenceResult = await authClient
@@ -2312,8 +2400,7 @@ function toggleHistory() {
         currentPreference = preferenceResult.data.preferred_agent;
       }
     } catch (_error) {
-      const loginName = currentUser && currentUser.email ? currentUser.email.split("@")[0].toLowerCase() : "";
-      currentRole = loginName.indexOf("admin") !== -1 ? "admin" : (currentUser ? "user" : "guest");
+      currentRole = isFallbackAdmin(currentUser) ? "admin" : (currentUser ? "user" : "guest");
     }
 
     roleResolved = true;
@@ -2332,6 +2419,11 @@ function toggleHistory() {
       currentUser = result && result.data && result.data.session ? result.data.session.user : null;
     } catch (_error) {
       currentUser = null;
+    }
+
+    if (currentUser && !localStorage.getItem(REMEMBER_ME_KEY) && !sessionStorage.getItem(SESSION_ACTIVE_KEY)) {
+      await performSignOut(getMessages());
+      return;
     }
 
     authChecking = false;
@@ -2582,6 +2674,13 @@ function toggleHistory() {
         : result.data && result.data.session
           ? result.data.session.user
           : null;
+      if (app.elements.rememberMeInput.checked) {
+        localStorage.setItem(REMEMBER_ME_KEY, "1");
+        sessionStorage.removeItem(SESSION_ACTIVE_KEY);
+      } else {
+        localStorage.removeItem(REMEMBER_ME_KEY);
+        sessionStorage.setItem(SESSION_ACTIVE_KEY, "1");
+      }
       await loadUserContext();
       syncUi();
       app.setAuthStatus(messages.loginSuccess);
@@ -2680,21 +2779,14 @@ function toggleHistory() {
     }
 
     const messages = getMessages();
+    app.setAuthStatus(messages.logoutAction + "...");
+    await performSignOut(messages);
+    window.location.reload();
+  });
 
-    try {
-      await authClient.auth.signOut();
-      currentUser = null;
-      currentProfile = null;
-      currentPreference = null;
-      currentRole = "guest";
-      roleResolved = true;
-      authChecking = false;
-      syncUi();
-      app.setAuthStatus(messages.logoutSuccess);
-      setAdminStatus("");
-      setUserStatus("");
-    } catch (_error) {
-      app.setAuthStatus(messages.loginFailed);
+  window.addEventListener("pagehide", function () {
+    if (!localStorage.getItem(REMEMBER_ME_KEY)) {
+      sessionStorage.removeItem(SESSION_ACTIVE_KEY);
     }
   });
 
