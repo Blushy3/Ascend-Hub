@@ -858,6 +858,12 @@ body.light-theme .player-badge {
   font: inherit;
   font-weight: 600;
   cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+}
+
+.management-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 28px rgba(10, 13, 24, 0.12);
 }
 
 .management-btn.primary {
@@ -869,6 +875,24 @@ body.light-theme .player-badge {
 .management-btn.danger {
   border-color: rgba(255, 70, 85, 0.24);
   color: var(--danger);
+}
+
+.management-btn.is-loading {
+  opacity: 0.8;
+  pointer-events: none;
+  transform: scale(0.98);
+}
+
+.management-btn.is-success {
+  border-color: rgba(70,255,154,0.35);
+  background: rgba(70,255,154,0.14);
+  color: #46ff9a;
+}
+
+.management-btn.is-error {
+  border-color: rgba(255,70,85,0.35);
+  background: rgba(255,70,85,0.14);
+  color: #ff808a;
 }
 
 .management-status {
@@ -1007,6 +1031,13 @@ body.light-theme .player-badge {
 
 .control-action.edit-button[hidden] {
   display: none;
+}
+
+.control-action:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
 .control-action.refresh-button {
@@ -1421,7 +1452,10 @@ const translations = {
     saveSuccess: "Zmiany zapisane.",
     saveFailed: "Nie udalo sie zapisac zmian.",
     preferenceSaved: "Deklaracja zostala zapisana.",
-    dataLoadFailed: "Nie udalo sie pobrac danych z Supabase. Zostawiam aktualny widok strony."
+    dataLoadFailed: "Nie udalo sie pobrac danych z Supabase. Zostawiam aktualny widok strony.",
+    savingLabel: "Zapisywanie...",
+    savedLabel: "Zapisano",
+    saveErrorLabel: "Blad"
   },
   en: {
     infoTitle: "Info",
@@ -1494,7 +1528,10 @@ const translations = {
     saveSuccess: "Changes saved.",
     saveFailed: "Could not save changes.",
     preferenceSaved: "Preference saved.",
-    dataLoadFailed: "Could not load data from Supabase. Keeping the current page view."
+    dataLoadFailed: "Could not load data from Supabase. Keeping the current page view.",
+    savingLabel: "Saving...",
+    savedLabel: "Saved",
+    saveErrorLabel: "Error"
   }
 };
 
@@ -1682,6 +1719,7 @@ function updateAuthUi() {
   authStatus.hidden = false;
   authSignedInStatus.textContent = "";
   editButton.hidden = true;
+  editButton.disabled = true;
   managementPanel.hidden = true;
   loginInput.disabled = false;
   passwordInput.disabled = false;
@@ -1712,6 +1750,10 @@ function handleLoginButtonClick(event) {
 function toggleManagementPanel(event) {
   if (event) {
     event.stopPropagation();
+  }
+
+  if (editButton.disabled) {
+    return;
   }
 
   if (managementPanel.hidden) {
@@ -2209,6 +2251,7 @@ function toggleHistory() {
   const ADMIN_LOGIN_FALLBACKS = ["admin", "blushyk"];
   const REMEMBER_ME_KEY = "eter-remember-me";
   const SESSION_ACTIVE_KEY = "eter-session-active";
+  const ROLE_HINT_KEY = "eter-role-hint";
   const SUPABASE_STORAGE_KEY = "sb-bhufgplssyhpkxtyfwwh-auth-token";
   const app = window.eterApp;
 
@@ -2227,7 +2270,6 @@ function toggleHistory() {
   let cachedPlayers = [];
   let cachedHistory = [];
   let authChecking = true;
-  let roleResolved = false;
 
   function getMessages() {
     const language = app.getCurrentLanguage();
@@ -2255,8 +2297,25 @@ function toggleHistory() {
     try {
       localStorage.removeItem(SUPABASE_STORAGE_KEY);
       sessionStorage.removeItem(SUPABASE_STORAGE_KEY);
+      localStorage.removeItem(ROLE_HINT_KEY);
+      sessionStorage.removeItem(ROLE_HINT_KEY);
     } catch (_error) {
     }
+  }
+
+  function readRoleHint() {
+    return localStorage.getItem(ROLE_HINT_KEY) || sessionStorage.getItem(ROLE_HINT_KEY) || "";
+  }
+
+  function writeRoleHint(role, rememberMe) {
+    if (rememberMe) {
+      localStorage.setItem(ROLE_HINT_KEY, role);
+      sessionStorage.removeItem(ROLE_HINT_KEY);
+      return;
+    }
+
+    sessionStorage.setItem(ROLE_HINT_KEY, role);
+    localStorage.removeItem(ROLE_HINT_KEY);
   }
 
   function resetSignedOutState(messages) {
@@ -2265,7 +2324,6 @@ function toggleHistory() {
     currentProfile = null;
     currentPreference = null;
     currentRole = "guest";
-    roleResolved = true;
     authChecking = false;
     localStorage.removeItem(REMEMBER_ME_KEY);
     sessionStorage.removeItem(SESSION_ACTIVE_KEY);
@@ -2285,7 +2343,7 @@ function toggleHistory() {
 
   function syncUi() {
     const messages = getMessages();
-    app.setCurrentRole(roleResolved ? currentRole : "guest");
+    app.setCurrentRole(currentUser ? currentRole : "guest");
     app.setCurrentProfile(currentProfile);
     app.setCurrentPreference(currentPreference);
     app.helpers.renderManagementPanels();
@@ -2302,6 +2360,7 @@ function toggleHistory() {
       app.elements.authStatus.hidden = true;
       app.elements.authSignedInStatus.textContent = messages.loginSignedAs + " " + loginName + ".";
       app.elements.editButton.hidden = false;
+      app.elements.editButton.disabled = false;
       app.elements.loginInput.value = loginName;
       app.elements.loginInput.disabled = false;
       app.elements.passwordInput.value = "";
@@ -2317,6 +2376,7 @@ function toggleHistory() {
     app.elements.authStatus.hidden = false;
     app.elements.authSignedInStatus.textContent = "";
     app.elements.editButton.hidden = true;
+    app.elements.editButton.disabled = true;
     app.elements.managementPanel.hidden = true;
     app.elements.loginInput.disabled = false;
     app.elements.passwordInput.disabled = false;
@@ -2390,8 +2450,7 @@ function toggleHistory() {
   async function loadUserContext() {
     currentProfile = null;
     currentPreference = null;
-    currentRole = "guest";
-    roleResolved = !currentUser;
+    currentRole = currentUser ? (isFallbackAdmin(currentUser) ? "admin" : "user") : "guest";
 
     if (!authClient || !currentUser) {
       syncUi();
@@ -2425,7 +2484,7 @@ function toggleHistory() {
       currentRole = isFallbackAdmin(currentUser) ? "admin" : (currentUser ? "user" : "guest");
     }
 
-    roleResolved = true;
+    writeRoleHint(currentRole, Boolean(localStorage.getItem(REMEMBER_ME_KEY)));
     syncUi();
   }
 
@@ -2457,6 +2516,9 @@ function toggleHistory() {
     }
 
     authChecking = false;
+    if (currentUser) {
+      currentRole = readRoleHint() || (isFallbackAdmin(currentUser) ? "admin" : "user");
+    }
     syncUi();
 
     await fetchPublicData();
@@ -2502,34 +2564,84 @@ function toggleHistory() {
     });
   }
 
+  function setButtonFeedback(button, state, label) {
+    if (!button) {
+      return;
+    }
+
+    if (!button.dataset.defaultLabel) {
+      button.dataset.defaultLabel = button.textContent.trim();
+    }
+
+    button.classList.remove("is-loading", "is-success", "is-error");
+    button.disabled = false;
+    button.textContent = label || button.dataset.defaultLabel;
+
+    if (state === "loading") {
+      button.classList.add("is-loading");
+      button.disabled = true;
+      return;
+    }
+
+    if (state === "success") {
+      button.classList.add("is-success");
+    }
+
+    if (state === "error") {
+      button.classList.add("is-error");
+    }
+
+    window.setTimeout(function () {
+      button.classList.remove("is-success", "is-error");
+      button.textContent = button.dataset.defaultLabel;
+    }, 1200);
+  }
+
   async function saveSettings() {
     const messages = getMessages();
     setAdminStatus("");
+    setButtonFeedback(app.elements.saveSettingsButton, "loading", messages.savingLabel);
 
     try {
       const payload = readAdminSettingsForm();
-      const result = await authClient
+      let result = await authClient
         .from("site_settings")
         .upsert(payload)
         .select()
         .single();
 
+      if (result.error && String(result.error.message || "").indexOf("score_info") !== -1) {
+        delete payload.score_info;
+        result = await authClient
+          .from("site_settings")
+          .upsert(payload)
+          .select()
+          .single();
+      }
+
       if (result.error) {
         setAdminStatus(result.error.message || messages.saveFailed);
+        setButtonFeedback(app.elements.saveSettingsButton, "error", messages.saveErrorLabel);
         return;
       }
 
+      if (payload.score_info !== undefined) {
+        result.data.score_info = app.elements.adminScoreInfo.value.trim();
+      }
       cachedSiteSettings = result.data;
       app.setSiteSettings(result.data);
       setAdminStatus(messages.saveSuccess);
+      setButtonFeedback(app.elements.saveSettingsButton, "success", messages.savedLabel);
     } catch (_error) {
       setAdminStatus(messages.saveFailed);
+      setButtonFeedback(app.elements.saveSettingsButton, "error", messages.saveErrorLabel);
     }
   }
 
   async function savePlayers() {
     const messages = getMessages();
     setAdminStatus("");
+    setButtonFeedback(app.elements.savePlayersButton, "loading", messages.savingLabel);
 
     try {
       const editedPlayers = readPlayerEditors();
@@ -2558,20 +2670,24 @@ function toggleHistory() {
 
         if (result.error) {
           setAdminStatus(result.error.message || messages.saveFailed);
+          setButtonFeedback(app.elements.savePlayersButton, "error", messages.saveErrorLabel);
           return;
         }
       }
 
       await fetchPublicData();
       setAdminStatus(messages.saveSuccess);
+      setButtonFeedback(app.elements.savePlayersButton, "success", messages.savedLabel);
     } catch (_error) {
       setAdminStatus(messages.saveFailed);
+      setButtonFeedback(app.elements.savePlayersButton, "error", messages.saveErrorLabel);
     }
   }
 
   async function saveHistory() {
     const messages = getMessages();
     setAdminStatus("");
+    setButtonFeedback(app.elements.saveHistoryButton, "loading", messages.savingLabel);
 
     try {
       const editedHistory = readHistoryEditors();
@@ -2587,6 +2703,7 @@ function toggleHistory() {
 
         if (deleteResult.error) {
           setAdminStatus(deleteResult.error.message || messages.saveFailed);
+          setButtonFeedback(app.elements.saveHistoryButton, "error", messages.saveErrorLabel);
           return;
         }
       }
@@ -2619,23 +2736,28 @@ function toggleHistory() {
 
         if (result.error) {
           setAdminStatus(result.error.message || messages.saveFailed);
+          setButtonFeedback(app.elements.saveHistoryButton, "error", messages.saveErrorLabel);
           return;
         }
       }
 
       await fetchPublicData();
       setAdminStatus(messages.saveSuccess);
+      setButtonFeedback(app.elements.saveHistoryButton, "success", messages.savedLabel);
     } catch (_error) {
       setAdminStatus(messages.saveFailed);
+      setButtonFeedback(app.elements.saveHistoryButton, "error", messages.saveErrorLabel);
     }
   }
 
   async function savePreference() {
     const messages = getMessages();
     setUserStatus("");
+    setButtonFeedback(app.elements.savePreferenceButton, "loading", messages.savingLabel);
 
     if (!currentUser) {
       setUserStatus(messages.loginPendingInfo);
+      setButtonFeedback(app.elements.savePreferenceButton, "error", messages.saveErrorLabel);
       return;
     }
 
@@ -2651,6 +2773,7 @@ function toggleHistory() {
 
       if (result.error) {
         setUserStatus(result.error.message || messages.saveFailed);
+        setButtonFeedback(app.elements.savePreferenceButton, "error", messages.saveErrorLabel);
         return;
       }
 
@@ -2658,8 +2781,10 @@ function toggleHistory() {
       app.setCurrentPreference(currentPreference);
       app.helpers.renderManagementPanels();
       setUserStatus(messages.preferenceSaved);
+      setButtonFeedback(app.elements.savePreferenceButton, "success", messages.savedLabel);
     } catch (_error) {
       setUserStatus(messages.saveFailed);
+      setButtonFeedback(app.elements.savePreferenceButton, "error", messages.saveErrorLabel);
     }
   }
 
@@ -2711,6 +2836,7 @@ function toggleHistory() {
         localStorage.removeItem(REMEMBER_ME_KEY);
         sessionStorage.setItem(SESSION_ACTIVE_KEY, "1");
       }
+      writeRoleHint(isFallbackAdmin(currentUser) ? "admin" : "user", app.elements.rememberMeInput.checked);
       await loadUserContext();
       syncUi();
       app.setAuthStatus(messages.loginSuccess);
@@ -2724,6 +2850,7 @@ function toggleHistory() {
       if (authClient && authClient.auth && authClient.auth.onAuthStateChange) {
         authClient.auth.onAuthStateChange(async function (_event, session) {
           currentUser = session ? session.user : null;
+          currentRole = currentUser ? (readRoleHint() || (isFallbackAdmin(currentUser) ? "admin" : "user")) : "guest";
           authChecking = false;
           syncUi();
           await loadUserContext();
@@ -2806,12 +2933,6 @@ function toggleHistory() {
   app.elements.authLogoutButton.addEventListener("click", function () {
     if (window.eterForceLogout) {
       window.eterForceLogout();
-    }
-  });
-
-  window.addEventListener("pagehide", function () {
-    if (!localStorage.getItem(REMEMBER_ME_KEY)) {
-      sessionStorage.removeItem(SESSION_ACTIVE_KEY);
     }
   });
 
