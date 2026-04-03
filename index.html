@@ -1257,8 +1257,8 @@ body.light-theme .player-name {
       <label class="auth-label" for="passwordInput" data-i18n="passwordLabel">Haslo</label>
       <input class="auth-input" id="passwordInput" name="password" type="password" autocomplete="current-password" placeholder="••••••••">
     </div>
-    <button class="auth-submit" type="submit" data-i18n="loginAction">Zaloguj</button>
-    <p class="auth-status" id="authStatus" data-i18n="loginPendingInfo">Panel jest przygotowany pod Supabase. Po podpieciu kluczy logowanie zacznie dzialac.</p>
+    <button class="auth-submit" type="submit"><span id="authSubmitLabel">Zaloguj</span></button>
+    <p class="auth-status" id="authStatus">Panel jest przygotowany pod Supabase. Po podpieciu kluczy logowanie zacznie dzialac.</p>
   </form>
 </div>
 
@@ -1266,7 +1266,7 @@ body.light-theme .player-name {
   <button class="control-action login-button" id="loginButton" type="button" aria-label="Logowanie">
     <span class="theme-toggle-text">
       <span class="theme-toggle-label" data-i18n="loginTitle">Logowanie</span>
-      <span class="language-value" data-i18n="loginShort">Login</span>
+      <span class="language-value" id="loginButtonState">Login</span>
     </span>
   </button>
   <button class="control-action theme-toggle" id="themeToggle" type="button" aria-label="Przelacz motyw">
@@ -1570,6 +1570,8 @@ const authPanel = document.getElementById("authPanel");
 const authClose = document.getElementById("authClose");
 const authForm = document.getElementById("authForm");
 const authStatus = document.getElementById("authStatus");
+const authSubmitLabel = document.getElementById("authSubmitLabel");
+const loginButtonState = document.getElementById("loginButtonState");
 const loginInput = document.getElementById("loginInput");
 const passwordInput = document.getElementById("passwordInput");
 const refreshButton = document.getElementById("refreshButton");
@@ -1597,8 +1599,8 @@ function updateAuthUi() {
   }
 
   setAuthStatus(translations[currentLanguage].loginPendingInfo);
-  loginButton.querySelector("[data-i18n='loginShort']").textContent = translations[currentLanguage].loginShort;
-  authForm.querySelector("[data-i18n='loginAction']").textContent = translations[currentLanguage].loginAction;
+  loginButtonState.textContent = translations[currentLanguage].loginShort;
+  authSubmitLabel.textContent = translations[currentLanguage].loginAction;
   loginInput.disabled = false;
   passwordInput.disabled = false;
 }
@@ -2001,7 +2003,9 @@ window.eterApp = {
     preferredAgentSelect,
     savePreferenceButton,
     loginButton,
+    loginButtonState,
     authForm,
+    authSubmitLabel,
     loginInput,
     passwordInput
   },
@@ -2105,8 +2109,8 @@ function toggleHistory() {
     return;
   }
 
-  const loginButtonLabel = app.elements.loginButton.querySelector("[data-i18n='loginShort']");
-  const submitButtonLabel = app.elements.authForm.querySelector("[data-i18n='loginAction']");
+  const loginButtonLabel = app.elements.loginButtonState;
+  const submitButtonLabel = app.elements.authSubmitLabel;
   let authClient = null;
   let currentUser = null;
   let currentProfile = null;
@@ -2260,9 +2264,11 @@ function toggleHistory() {
       currentUser = null;
     }
 
+    authChecking = false;
+    syncUi();
+
     await fetchPublicData();
     await loadUserContext();
-    authChecking = false;
     syncUi();
   }
 
@@ -2538,10 +2544,11 @@ function toggleHistory() {
         authClient.auth.onAuthStateChange(async function (_event, session) {
           currentUser = session ? session.user : null;
           authChecking = false;
+          syncUi();
           await loadUserContext();
           syncUi();
         });
-    }
+      }
   }
 
   function initializeAuthClient() {
