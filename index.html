@@ -2259,6 +2259,30 @@ function toggleHistory() {
     }
   }
 
+  function resetSignedOutState(messages) {
+    const text = messages || getMessages();
+    currentUser = null;
+    currentProfile = null;
+    currentPreference = null;
+    currentRole = "guest";
+    roleResolved = true;
+    authChecking = false;
+    localStorage.removeItem(REMEMBER_ME_KEY);
+    sessionStorage.removeItem(SESSION_ACTIVE_KEY);
+    clearStoredAuth();
+    app.setCurrentRole("guest");
+    app.setCurrentProfile(null);
+    app.setCurrentPreference(null);
+    if (app.elements.rememberMeInput) {
+      app.elements.rememberMeInput.checked = false;
+    }
+    syncUi();
+    app.setAuthStatus(text.logoutSuccess);
+    setAdminStatus("");
+    setUserStatus("");
+    app.elements.managementPanel.hidden = true;
+  }
+
   function syncUi() {
     const messages = getMessages();
     app.setCurrentRole(roleResolved ? currentRole : "guest");
@@ -2300,6 +2324,7 @@ function toggleHistory() {
 
   async function performSignOut(messages) {
     const text = messages || getMessages();
+    resetSignedOutState(text);
 
     if (authClient) {
       try {
@@ -2307,30 +2332,11 @@ function toggleHistory() {
       } catch (_error) {
       }
     }
-
-    currentUser = null;
-    currentProfile = null;
-    currentPreference = null;
-    currentRole = "guest";
-    roleResolved = true;
-    authChecking = false;
-    localStorage.removeItem(REMEMBER_ME_KEY);
-    sessionStorage.removeItem(SESSION_ACTIVE_KEY);
-    clearStoredAuth();
-    app.setCurrentRole("guest");
-    app.setCurrentProfile(null);
-    app.setCurrentPreference(null);
-    syncUi();
-    app.setAuthStatus(text.logoutSuccess);
-    setAdminStatus("");
-    setUserStatus("");
-    app.elements.managementPanel.hidden = true;
   }
 
   window.eterForceLogout = async function () {
     const messages = getMessages();
     await performSignOut(messages);
-    window.location.reload();
   };
 
   async function fetchPublicData() {
