@@ -2255,7 +2255,7 @@ function toggleHistory() {
   const SESSION_ACTIVE_KEY = "eter-session-active";
   const ROLE_HINT_KEY = "eter-role-hint";
   const SUPABASE_STORAGE_KEY = "sb-bhufgplssyhpkxtyfwwh-auth-token";
-  const SAVE_TIMEOUT_MS = 15000;
+  const SAVE_TIMEOUT_MS = 45000;
   const app = window.eterApp;
 
   if (!app) {
@@ -2618,6 +2618,35 @@ function toggleHistory() {
     }
   }
 
+  function getSaveErrorMessage(error, messages) {
+    if (!error) {
+      return messages.saveFailed;
+    }
+
+    if (error.message === "timeout") {
+      return messages.saveTimeout;
+    }
+
+    return error.message || messages.saveFailed;
+  }
+
+  async function runSaveRequests(requests) {
+    if (!requests.length) {
+      return [];
+    }
+
+    const results = await withTimeout(Promise.all(requests), SAVE_TIMEOUT_MS);
+    const failedResult = results.find(function (result) {
+      return result && result.error;
+    });
+
+    if (failedResult && failedResult.error) {
+      throw new Error(failedResult.error.message || "request_failed");
+    }
+
+    return results;
+  }
+
   async function saveSettings() {
     const messages = getMessages();
     setAdminStatus("");
@@ -2627,15 +2656,13 @@ function toggleHistory() {
       const payload = readAdminSettingsForm();
       let result = await withTimeout(authClient
         .from("site_settings")
-        .upsert(payload)
-        .select(), SAVE_TIMEOUT_MS);
+        .upsert(payload, { onConflict: "id" }), SAVE_TIMEOUT_MS);
 
       if (result.error && String(result.error.message || "").indexOf("score_info") !== -1) {
         delete payload.score_info;
         result = await withTimeout(authClient
           .from("site_settings")
-          .upsert(payload)
-          .select(), SAVE_TIMEOUT_MS);
+          .upsert(payload, { onConflict: "id" }), SAVE_TIMEOUT_MS);
       }
 
       if (result.error) {
@@ -2644,19 +2671,13 @@ function toggleHistory() {
         return;
       }
 
-      const savedSettings = result.data && result.data[0]
-        ? result.data[0]
-        : Object.assign({}, siteSettings, payload);
-
-      if (payload.score_info !== undefined) {
-        savedSettings.score_info = app.elements.adminScoreInfo.value.trim();
-      }
+      const savedSettings = Object.assign({}, siteSettings, payload);
       cachedSiteSettings = savedSettings;
       app.setSiteSettings(savedSettings);
       setAdminStatus(messages.saveSuccess);
       setButtonFeedback(app.elements.saveSettingsButton, "success", messages.savedLabel);
     } catch (_error) {
-      setAdminStatus(_error && _error.message === "timeout" ? messages.saveTimeout : messages.saveFailed);
+      setAdminStatus(getSaveErrorMessage(_error, messages));
       setButtonFeedback(app.elements.saveSettingsButton, "error", messages.saveErrorLabel);
     }
   }
@@ -2668,58 +2689,52 @@ function toggleHistory() {
 
     try {
       const editedPlayers = readPlayerEditors();
-      const savedPlayers = [];
 
-      for (let i = 0; i < editedPlayers.length; i += 1) {
-        const player = editedPlayers[i];
-        let result;
-
-        if (player.id) {
-          result = await withTimeout(authClient
+      const updateRequests = editedPlayers
+        .filter(function (player) {
+          return Boolean(player.id);
+        })
+        .map(function (player) {
+          return authClient
             .from("player_assignments")
             .update({
               current_agent: player.current_agent,
               is_reserve: player.is_reserve
             })
-            .eq("id", player.id)
-            .select()
-            .single(), SAVE_TIMEOUT_MS);
-        } else {
-          const insertPayload = {
-            player_name: player.player_name,
-            current_agent: player.current_agent,
-            is_reserve: player.is_reserve
-          };
-          result = await withTimeout(authClient
+            .eq("id", player.id);
+        });
+
+      const insertRequests = editedPlayers
+        .filter(function (player) {
+          return !player.id;
+        })
+        .map(function (player) {
+          return authClient
             .from("player_assignments")
-            .insert(insertPayload)
-            .select()
-            .single(), SAVE_TIMEOUT_MS);
-        }
+            .insert({
+              player_name: player.player_name,
+              current_agent: player.current_agent,
+              is_reserve: player.is_reserve
+            });
+        });
 
-        if (result.error) {
-          setAdminStatus(result.error.message || messages.saveFailed);
-          setButtonFeedback(app.elements.savePlayersButton, "error", messages.saveErrorLabel);
-          return;
-        }
+      await runSaveRequests(updateRequests);
+      await runSaveRequests(insertRequests);
 
-        if (result.data) {
-          savedPlayers.push({
-            id: result.data.id,
-            name: result.data.player_name,
-            agent: result.data.current_agent || "?",
-            is_reserve: result.data.is_reserve
-          });
-        }
-      }
-
-      cachedPlayers = savedPlayers;
+      cachedPlayers = editedPlayers.map(function (player) {
+        return {
+          id: player.id,
+          name: player.player_name,
+          agent: player.current_agent,
+          is_reserve: player.is_reserve
+        };
+      });
       app.setPlayers(cachedPlayers);
       fetchPublicData().catch(function () {});
       setAdminStatus(messages.saveSuccess);
       setButtonFeedback(app.elements.savePlayersButton, "success", messages.savedLabel);
     } catch (_error) {
-      setAdminStatus(_error && _error.message === "timeout" ? messages.saveTimeout : messages.saveFailed);
+      setAdminStatus(getSaveErrorMessage(_error, messages));
       setButtonFeedback(app.elements.savePlayersButton, "error", messages.saveErrorLabel);
     }
   }
@@ -2731,7 +2746,6 @@ function toggleHistory() {
 
     try {
       const editedHistory = readHistoryEditors();
-      const savedHistory = [];
       const existingIds = cachedHistory.filter(function (item) { return item.id != null; }).map(function (item) { return item.id; });
       const editedIds = editedHistory.filter(function (item) { return item.id != null; }).map(function (item) { return item.id; });
       const idsToDelete = existingIds.filter(function (id) { return editedIds.indexOf(id) === -1; });
@@ -2749,12 +2763,12 @@ function toggleHistory() {
         }
       }
 
-      for (let i = 0; i < editedHistory.length; i += 1) {
-        const match = editedHistory[i];
-        let result;
-
-        if (match.id) {
-          result = await withTimeout(authClient
+      const updateRequests = editedHistory
+        .filter(function (match) {
+          return Boolean(match.id);
+        })
+        .map(function (match) {
+          return authClient
             .from("match_history")
             .update({
               map_name: match.map_name,
@@ -2764,43 +2778,36 @@ function toggleHistory() {
               result: match.result,
               sort_order: match.sort_order
             })
-            .eq("id", match.id)
-            .select()
-            .single(), SAVE_TIMEOUT_MS);
-        } else {
-          const insertPayload = {
-            map_name: match.map_name,
-            opponent: match.opponent,
-            score: match.score,
-            points: match.points,
-            result: match.result,
-            sort_order: match.sort_order
-          };
-          result = await withTimeout(authClient
+            .eq("id", match.id);
+        });
+
+      const insertRequests = editedHistory
+        .filter(function (match) {
+          return !match.id;
+        })
+        .map(function (match) {
+          return authClient
             .from("match_history")
-            .insert(insertPayload)
-            .select()
-            .single(), SAVE_TIMEOUT_MS);
-        }
+            .insert({
+              map_name: match.map_name,
+              opponent: match.opponent,
+              score: match.score,
+              points: match.points,
+              result: match.result,
+              sort_order: match.sort_order
+            });
+        });
 
-        if (result.error) {
-          setAdminStatus(result.error.message || messages.saveFailed);
-          setButtonFeedback(app.elements.saveHistoryButton, "error", messages.saveErrorLabel);
-          return;
-        }
+      await runSaveRequests(updateRequests);
+      await runSaveRequests(insertRequests);
 
-        if (result.data) {
-          savedHistory.push(result.data);
-        }
-      }
-
-      cachedHistory = savedHistory;
+      cachedHistory = editedHistory.slice();
       app.setHistoryMatches(cachedHistory);
       fetchPublicData().catch(function () {});
       setAdminStatus(messages.saveSuccess);
       setButtonFeedback(app.elements.saveHistoryButton, "success", messages.savedLabel);
     } catch (_error) {
-      setAdminStatus(_error && _error.message === "timeout" ? messages.saveTimeout : messages.saveFailed);
+      setAdminStatus(getSaveErrorMessage(_error, messages));
       setButtonFeedback(app.elements.saveHistoryButton, "error", messages.saveErrorLabel);
     }
   }
@@ -2822,9 +2829,7 @@ function toggleHistory() {
         .upsert({
           user_id: currentUser.id,
           preferred_agent: app.elements.preferredAgentSelect.value
-        }, { onConflict: "user_id" })
-        .select()
-        .single(), SAVE_TIMEOUT_MS);
+        }, { onConflict: "user_id" }), SAVE_TIMEOUT_MS);
 
       if (result.error) {
         setUserStatus(result.error.message || messages.saveFailed);
@@ -2832,13 +2837,13 @@ function toggleHistory() {
         return;
       }
 
-      currentPreference = result.data.preferred_agent;
+      currentPreference = app.elements.preferredAgentSelect.value;
       app.setCurrentPreference(currentPreference);
       app.helpers.renderManagementPanels();
       setUserStatus(messages.preferenceSaved);
       setButtonFeedback(app.elements.savePreferenceButton, "success", messages.savedLabel);
     } catch (_error) {
-      setUserStatus(_error && _error.message === "timeout" ? messages.saveTimeout : messages.saveFailed);
+      setUserStatus(getSaveErrorMessage(_error, messages));
       setButtonFeedback(app.elements.savePreferenceButton, "error", messages.saveErrorLabel);
     }
   }
