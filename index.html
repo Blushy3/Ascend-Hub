@@ -1451,6 +1451,7 @@ const translations = {
     reserveLabel: "Rezerwa",
     saveSuccess: "Zmiany zapisane.",
     saveFailed: "Nie udalo sie zapisac zmian.",
+    saveTimeout: "Przekroczono czas zapisu.",
     preferenceSaved: "Deklaracja zostala zapisana.",
     dataLoadFailed: "Nie udalo sie pobrac danych z Supabase. Zostawiam aktualny widok strony.",
     savingLabel: "Zapisywanie...",
@@ -1527,6 +1528,7 @@ const translations = {
     reserveLabel: "Reserve",
     saveSuccess: "Changes saved.",
     saveFailed: "Could not save changes.",
+    saveTimeout: "Save timed out.",
     preferenceSaved: "Preference saved.",
     dataLoadFailed: "Could not load data from Supabase. Keeping the current page view.",
     savingLabel: "Saving...",
@@ -2597,6 +2599,24 @@ function toggleHistory() {
     }, 1200);
   }
 
+  async function withTimeout(promise, timeoutMs) {
+    let timeoutId = null;
+
+    const timeoutPromise = new Promise(function (_resolve, reject) {
+      timeoutId = window.setTimeout(function () {
+        reject(new Error("timeout"));
+      }, timeoutMs || 8000);
+    });
+
+    try {
+      return await Promise.race([promise, timeoutPromise]);
+    } finally {
+      if (timeoutId) {
+        window.clearTimeout(timeoutId);
+      }
+    }
+  }
+
   async function saveSettings() {
     const messages = getMessages();
     setAdminStatus("");
@@ -2604,19 +2624,19 @@ function toggleHistory() {
 
     try {
       const payload = readAdminSettingsForm();
-      let result = await authClient
+      let result = await withTimeout(authClient
         .from("site_settings")
         .upsert(payload)
         .select()
-        .single();
+        .single(), 8000);
 
       if (result.error && String(result.error.message || "").indexOf("score_info") !== -1) {
         delete payload.score_info;
-        result = await authClient
+        result = await withTimeout(authClient
           .from("site_settings")
           .upsert(payload)
           .select()
-          .single();
+          .single(), 8000);
       }
 
       if (result.error) {
@@ -2633,7 +2653,7 @@ function toggleHistory() {
       setAdminStatus(messages.saveSuccess);
       setButtonFeedback(app.elements.saveSettingsButton, "success", messages.savedLabel);
     } catch (_error) {
-      setAdminStatus(messages.saveFailed);
+      setAdminStatus(_error && _error.message === "timeout" ? messages.saveTimeout : messages.saveFailed);
       setButtonFeedback(app.elements.saveSettingsButton, "error", messages.saveErrorLabel);
     }
   }
@@ -2651,7 +2671,7 @@ function toggleHistory() {
         let result;
 
         if (player.id) {
-          result = await authClient
+          result = await withTimeout(authClient
             .from("player_assignments")
             .update({
               current_agent: player.current_agent,
@@ -2659,13 +2679,13 @@ function toggleHistory() {
             })
             .eq("id", player.id)
             .select()
-            .single();
+            .single(), 8000);
         } else {
-          result = await authClient
+          result = await withTimeout(authClient
             .from("player_assignments")
             .insert(player)
             .select()
-            .single();
+            .single(), 8000);
         }
 
         if (result.error) {
@@ -2675,11 +2695,20 @@ function toggleHistory() {
         }
       }
 
-      await fetchPublicData();
+      cachedPlayers = editedPlayers.map(function (player) {
+        return {
+          id: player.id,
+          name: player.player_name,
+          agent: player.current_agent,
+          is_reserve: player.is_reserve
+        };
+      });
+      app.setPlayers(cachedPlayers);
+      fetchPublicData().catch(function () {});
       setAdminStatus(messages.saveSuccess);
       setButtonFeedback(app.elements.savePlayersButton, "success", messages.savedLabel);
     } catch (_error) {
-      setAdminStatus(messages.saveFailed);
+      setAdminStatus(_error && _error.message === "timeout" ? messages.saveTimeout : messages.saveFailed);
       setButtonFeedback(app.elements.savePlayersButton, "error", messages.saveErrorLabel);
     }
   }
@@ -2696,10 +2725,10 @@ function toggleHistory() {
       const idsToDelete = existingIds.filter(function (id) { return editedIds.indexOf(id) === -1; });
 
       if (idsToDelete.length) {
-        const deleteResult = await authClient
+        const deleteResult = await withTimeout(authClient
           .from("match_history")
           .delete()
-          .in("id", idsToDelete);
+          .in("id", idsToDelete), 8000);
 
         if (deleteResult.error) {
           setAdminStatus(deleteResult.error.message || messages.saveFailed);
@@ -2713,7 +2742,7 @@ function toggleHistory() {
         let result;
 
         if (match.id) {
-          result = await authClient
+          result = await withTimeout(authClient
             .from("match_history")
             .update({
               map_name: match.map_name,
@@ -2725,13 +2754,13 @@ function toggleHistory() {
             })
             .eq("id", match.id)
             .select()
-            .single();
+            .single(), 8000);
         } else {
-          result = await authClient
+          result = await withTimeout(authClient
             .from("match_history")
             .insert(match)
             .select()
-            .single();
+            .single(), 8000);
         }
 
         if (result.error) {
@@ -2741,11 +2770,13 @@ function toggleHistory() {
         }
       }
 
-      await fetchPublicData();
+      cachedHistory = editedHistory.slice();
+      app.setHistoryMatches(cachedHistory);
+      fetchPublicData().catch(function () {});
       setAdminStatus(messages.saveSuccess);
       setButtonFeedback(app.elements.saveHistoryButton, "success", messages.savedLabel);
     } catch (_error) {
-      setAdminStatus(messages.saveFailed);
+      setAdminStatus(_error && _error.message === "timeout" ? messages.saveTimeout : messages.saveFailed);
       setButtonFeedback(app.elements.saveHistoryButton, "error", messages.saveErrorLabel);
     }
   }
@@ -2762,14 +2793,14 @@ function toggleHistory() {
     }
 
     try {
-      const result = await authClient
+      const result = await withTimeout(authClient
         .from("player_preferences")
         .upsert({
           user_id: currentUser.id,
           preferred_agent: app.elements.preferredAgentSelect.value
         }, { onConflict: "user_id" })
         .select()
-        .single();
+        .single(), 8000);
 
       if (result.error) {
         setUserStatus(result.error.message || messages.saveFailed);
@@ -2783,7 +2814,7 @@ function toggleHistory() {
       setUserStatus(messages.preferenceSaved);
       setButtonFeedback(app.elements.savePreferenceButton, "success", messages.savedLabel);
     } catch (_error) {
-      setUserStatus(messages.saveFailed);
+      setUserStatus(_error && _error.message === "timeout" ? messages.saveTimeout : messages.saveFailed);
       setButtonFeedback(app.elements.savePreferenceButton, "error", messages.saveErrorLabel);
     }
   }
