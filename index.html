@@ -1311,7 +1311,7 @@ body.light-theme .player-name {
     <div class="auth-signed-in" id="authSignedIn" hidden>
       <p class="auth-status" id="authSignedInStatus"></p>
       <div class="auth-actions">
-        <button class="auth-secondary" id="authLogoutButton" type="button">Wyloguj</button>
+        <button class="auth-secondary" id="authLogoutButton" type="button" onclick="window.eterForceLogout && window.eterForceLogout()">Wyloguj</button>
       </div>
     </div>
     <p class="auth-status" id="authStatus">Panel jest przygotowany pod Supabase. Po podpieciu kluczy logowanie zacznie dzialac.</p>
@@ -2327,6 +2327,12 @@ function toggleHistory() {
     app.elements.managementPanel.hidden = true;
   }
 
+  window.eterForceLogout = async function () {
+    const messages = getMessages();
+    await performSignOut(messages);
+    window.location.reload();
+  };
+
   async function fetchPublicData() {
     if (!authClient) {
       return;
@@ -2791,15 +2797,10 @@ function toggleHistory() {
     }
   });
 
-  app.elements.authLogoutButton.addEventListener("click", async function () {
-    if (!authClient || !currentUser) {
-      return;
+  app.elements.authLogoutButton.addEventListener("click", function () {
+    if (window.eterForceLogout) {
+      window.eterForceLogout();
     }
-
-    const messages = getMessages();
-    app.setAuthStatus(messages.logoutAction + "...");
-    await performSignOut(messages);
-    window.location.reload();
   });
 
   window.addEventListener("pagehide", function () {
