@@ -514,19 +514,12 @@ async function restoreAuthSession(){
 window.handleLogin=async function(){
   const u=document.getElementById('loginUsername').value.trim().toLowerCase();
   const p=document.getElementById('loginPassword').value;
-  const remember=document.getElementById('rememberMe').checked;
   const btn=document.getElementById('loginBtn');
   const err=document.getElementById('loginError');
   err.textContent='';
   const email=u2e[u];
   if(!email){err.textContent='Nieznany login.';return;}
   btn.disabled=true;btn.textContent='Logowanie...';
-
-  if(!remember){
-    sessionStorage.setItem('eter-no-remember','1');
-  } else {
-    sessionStorage.removeItem('eter-no-remember');
-  }
 
   const { error } = await supabase.auth.signInWithPassword({ email, password:p });
   if(error){err.textContent='Błędne hasło lub login.';btn.disabled=false;btn.textContent='Zaloguj się';return;}
@@ -538,11 +531,6 @@ window.handleLogout=async function(){
   document.getElementById('profileDropdown').classList.remove('active');
 };
 
-window.addEventListener('beforeunload',()=>{
-  if(sessionStorage.getItem('eter-no-remember')==='1'){
-    supabase.auth.signOut();
-  }
-});
 
 supabase.auth.onAuthStateChange(async(_,session)=>{
   if(session){
