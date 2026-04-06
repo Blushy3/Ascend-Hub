@@ -580,10 +580,10 @@ async function doUpload(file){
   prog.classList.add('visible');bar.style.width='20%';lbl.textContent='Wysyłanie...';
   const ext=file.name.split('.').pop();
   const fname=`gallery_${uploadAccess.username}_${Date.now()}.${ext}`;
-  const{error:se}=await supabase.storage.from('EterGallery').upload(fname,file,{cacheControl:'3600',upsert:false});
+  const{error:se}=await supabase.storage.from('EterStorage').upload(fname,file,{cacheControl:'3600',upsert:false});
   if(se){lbl.textContent='Błąd: '+se.message;bar.style.background='var(--danger)';return;}
   bar.style.width='70%';
-  const{data:ud}=supabase.storage.from('EterGallery').getPublicUrl(fname);
+  const{data:ud}=supabase.storage.from('EterStorage').getPublicUrl(fname);
   const{error:de}=await supabase.rpc('create_gallery_item_by_code',{p_username:uploadAccess.username,p_code:uploadAccess.code,p_image_url:ud.publicUrl});
   if(de){lbl.textContent='Błąd zapisu: '+de.message;return;}
   bar.style.width='100%';lbl.textContent='Dodano! ✅';fileInput.value='';
