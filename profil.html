@@ -468,31 +468,7 @@ import{createClient}from'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm
 const SB_URL='https://zllishknfqylpommgnew.supabase.co';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpsbGlzaGtuZnF5bHBvbW1nbmV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzOTk4MDksImV4cCI6MjA5MDk3NTgwOX0.Tm7ZGifcT5Y2kBJxaTUK_ASQruVcpHrM9UDMtmQiT4A';
 const AUTH_STORAGE_KEY='eter-session';
-const AUTH_MODE_KEY='eter-auth-mode';
-function getAuthStorageMode(){return localStorage.getItem(AUTH_MODE_KEY)==='local'?'local':'session';}
-const authStorage={
-  getItem(key){
-    const preferredStorage=getAuthStorageMode()==='local'?localStorage:sessionStorage;
-    const fallbackStorage=getAuthStorageMode()==='local'?sessionStorage:localStorage;
-    const preferredValue=preferredStorage.getItem(key);
-    if(preferredValue!==null)return preferredValue;
-    return fallbackStorage.getItem(key);
-  },
-  setItem(key,value){
-    if(getAuthStorageMode()==='local'){
-      localStorage.setItem(key,value);
-      sessionStorage.removeItem(key);
-      return;
-    }
-    sessionStorage.setItem(key,value);
-    localStorage.removeItem(key);
-  },
-  removeItem(key){
-    localStorage.removeItem(key);
-    sessionStorage.removeItem(key);
-  }
-};
-const supabase=createClient(SB_URL,SB_KEY,{auth:{persistSession:true,storageKey:AUTH_STORAGE_KEY,storage:authStorage,autoRefreshToken:true,detectSessionInUrl:false}});
+const supabase=createClient(SB_URL,SB_KEY,{auth:{persistSession:true,storageKey:AUTH_STORAGE_KEY,storage:localStorage,autoRefreshToken:true,detectSessionInUrl:false}});
 
 let viewedUsername=null;
 let viewedProfile=null;
@@ -659,7 +635,6 @@ async function updateAuthUI(user,username,avatarUrl){
 window.handleLogin=async function(){
   const username=document.getElementById('loginUsername').value.trim().toLowerCase();
   const password=document.getElementById('loginPassword').value;
-  const remember=document.getElementById('rememberMe').checked;
   const button=document.getElementById('loginBtn');
   const errorBox=document.getElementById('loginError');
   const email=u2e[username];
@@ -667,8 +642,8 @@ window.handleLogin=async function(){
   if(!email){errorBox.textContent=(profileTranslations[currentLang]||profileTranslations.pl).unknownLogin;return;}
   button.disabled=true;
   button.textContent='Logowanie...';
-  localStorage.setItem(AUTH_MODE_KEY,remember?'local':'session');
-  authStorage.removeItem(AUTH_STORAGE_KEY);
+  localStorage.removeItem(AUTH_STORAGE_KEY);
+  sessionStorage.removeItem(AUTH_STORAGE_KEY);
 
   const { error } = await supabase.auth.signInWithPassword({ email, password });
   if(error){
@@ -685,8 +660,8 @@ window.handleLogin=async function(){
 
 window.handleLogout=async function(){
   await supabase.auth.signOut();
-  authStorage.removeItem(AUTH_STORAGE_KEY);
-  localStorage.removeItem(AUTH_MODE_KEY);
+  localStorage.removeItem(AUTH_STORAGE_KEY);
+  sessionStorage.removeItem(AUTH_STORAGE_KEY);
   document.getElementById('profileDropdown').classList.remove('active');
 };
 
@@ -770,17 +745,11 @@ function renderProfile(prof){
   if(prof.tracker_url){tl.href=prof.tracker_url;tl.style.display='inline-flex';}
   else{tl.style.display='none';}
 
-  // Profile theme
-  const theme=prof.profile_style||'prof-default';
-  applyProfileTheme(theme);
-  document.querySelectorAll('.theme-swatch').forEach(s=>{s.classList.toggle('active',s.dataset.theme===theme);});
-  pendingProfileTheme=theme;
-
-  // Frame
-  const frame=prof.frame_style||'none';
-  applyFrame(frame);
-  document.querySelectorAll('.frame-opt').forEach(f=>{f.classList.toggle('active',f.dataset.frame===frame);});
-  pendingFrameStyle=frame;
+  // Profile motifs disabled for now
+  applyProfileTheme('prof-default');
+  applyFrame('none');
+  pendingProfileTheme='prof-default';
+  pendingFrameStyle='none';
 
   // Social links
   socialLinks=Array.isArray(prof.social_links)?prof.social_links:[];
@@ -871,8 +840,6 @@ window.saveProfile=async function(){
     display_name:displayName||null,
     bio:bio||null,
     tracker_url:trackerUrl||null,
-    profile_style:pendingProfileTheme,
-    frame_style:pendingFrameStyle,
     social_links:socialLinks
   }).eq('id',sessionUser.id);
 
@@ -1026,6 +993,9 @@ async function bootstrap(){
 }
 
 bootstrap();
+
+document.getElementById('themePicker').closest('.prof-edit-section').style.display='none';
+document.getElementById('framePicker').closest('.prof-edit-section').style.display='none';
 </script>
 </body>
 </html>
