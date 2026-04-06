@@ -325,7 +325,7 @@ body.light-theme .player-name{font-weight:600}
 import{createClient}from'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 const SB_URL='https://zllishknfqylpommgnew.supabase.co';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpsbGlzaGtuZnF5bHBvbW1nbmV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzOTk4MDksImV4cCI6MjA5MDk3NTgwOX0.Tm7ZGifcT5Y2kBJxaTUK_ASQruVcpHrM9UDMtmQiT4A';
-const supabase=createClient(SB_URL,SB_KEY,{auth:{persistSession:true,storageKey:'eter-session',storage:localStorage,autoRefreshToken:true,detectSessionInUrl:false}});
+const supabase=createClient(SB_URL,SB_KEY,{auth:{persistSession:true,autoRefreshToken:true}});
 
 const GALLERY_LIMIT=6;
 let currentUser=null,currentUsername=null,currentUserId=null;
@@ -355,11 +355,11 @@ window.handleLogin=async function(){
     // Zamiast tego zapisujemy flagę
     sessionStorage.setItem('eter-no-remember','1');
   } else {
-    sessionStorage.removeItem('eter-no-remember');
   }
 
   const{error}=await supabase.auth.signInWithPassword({email,password:p});
   if(error){err.textContent='Błędne hasło lub login.';btn.disabled=false;btn.textContent='Zaloguj się';return;}
+  btn.disabled=false;
   closeLoginModal();
 };
 
