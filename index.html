@@ -341,13 +341,13 @@ const u2e={blushyk:'blushyk@eter.gg',tengrubytyp:'tengrubytyp@eter.gg',ratatuii:
 window.handleLogin=async function(){
   const u=document.getElementById('loginUsername').value.trim().toLowerCase();
   const p=document.getElementById('loginPassword').value;
-  const remember=document.getElementById('rememberMe').checked;
   const btn=document.getElementById('loginBtn');
   const err=document.getElementById('loginError');
   err.textContent='';
   const email=u2e[u];
   if(!email){err.textContent='Nieznany login. Sprawdź pisownię.';return;}
   btn.disabled=true;btn.textContent='Logowanie...';
+  /*
 
   // Ustaw długość sesji
   if(!remember){
@@ -359,6 +359,7 @@ window.handleLogin=async function(){
     sessionStorage.removeItem('eter-no-remember');
   }
 
+  */
   const{error}=await supabase.auth.signInWithPassword({email,password:p});
   if(error){err.textContent='Błędne hasło lub login.';btn.disabled=false;btn.textContent='Zaloguj się';return;}
   closeLoginModal();
@@ -370,11 +371,6 @@ window.handleLogout=async function(){
 };
 
 // Jeśli nie "zapamiętaj mnie" — wyloguj przy zamknięciu okna
-window.addEventListener('beforeunload',()=>{
-  if(sessionStorage.getItem('eter-no-remember')==='1'){
-    supabase.auth.signOut();
-  }
-});
 
 async function updateAuthUI(user,username,avatarUrl){
   currentUser=user;currentUsername=username;
