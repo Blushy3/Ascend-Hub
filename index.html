@@ -278,7 +278,7 @@ body.light-theme .player-name{font-weight:600}
 </div>
 <div class="menu" id="menu">
   <h3 id="menuTitle"></h3>
-  <a id="profileMenuLink" href="#">Profil</a>
+  <a id="profilePlayerLink" href="#">Profil</a>
   <a id="lineupLink" href="#" target="_blank">Agent</a>
   <a id="statsLink" href="#" target="_blank">Statystyki</a>
 </div>
@@ -325,8 +325,7 @@ body.light-theme .player-name{font-weight:600}
 import{createClient}from'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 const SB_URL='https://zllishknfqylpommgnew.supabase.co';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpsbGlzaGtuZnF5bHBvbW1nbmV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzOTk4MDksImV4cCI6MjA5MDk3NTgwOX0.Tm7ZGifcT5Y2kBJxaTUK_ASQruVcpHrM9UDMtmQiT4A';
-const AUTH_STORAGE_KEY='eter-session';
-const supabase=createClient(SB_URL,SB_KEY,{auth:{persistSession:true,storageKey:AUTH_STORAGE_KEY,storage:localStorage,autoRefreshToken:true,detectSessionInUrl:false}});
+const supabase=createClient(SB_URL,SB_KEY,{auth:{persistSession:true,storageKey:'eter-session',storage:localStorage,autoRefreshToken:true,detectSessionInUrl:false}});
 
 const GALLERY_LIMIT=6;
 let currentUser=null,currentUsername=null,currentUserId=null;
@@ -342,15 +341,13 @@ const u2e={blushyk:'blushyk@eter.gg',tengrubytyp:'tengrubytyp@eter.gg',ratatuii:
 window.handleLogin=async function(){
   const u=document.getElementById('loginUsername').value.trim().toLowerCase();
   const p=document.getElementById('loginPassword').value;
+  const remember=document.getElementById('rememberMe').checked;
   const btn=document.getElementById('loginBtn');
   const err=document.getElementById('loginError');
   err.textContent='';
   const email=u2e[u];
   if(!email){err.textContent='Nieznany login. Sprawdź pisownię.';return;}
   btn.disabled=true;btn.textContent='Logowanie...';
-  localStorage.removeItem(AUTH_STORAGE_KEY);
-  sessionStorage.removeItem(AUTH_STORAGE_KEY);
-  /*
 
   // Ustaw długość sesji
   if(!remember){
@@ -362,22 +359,22 @@ window.handleLogin=async function(){
     sessionStorage.removeItem('eter-no-remember');
   }
 
-  */
   const{error}=await supabase.auth.signInWithPassword({email,password:p});
   if(error){err.textContent='Błędne hasło lub login.';btn.disabled=false;btn.textContent='Zaloguj się';return;}
-  btn.disabled=false;btn.textContent='Zaloguj siÄ™';
-  btn.textContent='Zaloguj się';
   closeLoginModal();
 };
 
 window.handleLogout=async function(){
   await supabase.auth.signOut();
-  localStorage.removeItem(AUTH_STORAGE_KEY);
-  sessionStorage.removeItem(AUTH_STORAGE_KEY);
   document.getElementById('profileDropdown').classList.remove('active');
 };
 
 // Jeśli nie "zapamiętaj mnie" — wyloguj przy zamknięciu okna
+window.addEventListener('beforeunload',()=>{
+  if(sessionStorage.getItem('eter-no-remember')==='1'){
+    supabase.auth.signOut();
+  }
+});
 
 async function updateAuthUI(user,username,avatarUrl){
   currentUser=user;currentUsername=username;
@@ -401,32 +398,26 @@ async function updateAuthUI(user,username,avatarUrl){
   }
 }
 
-supabase.auth.onAuthStateChange(async(_,session)=>{
+async function restoreAuthSession(){
+  const { data: { session } } = await supabase.auth.getSession();
   if(session){
-    const{data:prof}=await supabase.from('profiles').select('username,avatar_url').eq('id',session.user.id).single();
-    await updateAuthUI(session.user,prof?.username||session.user.email?.split('@')[0]||session.user.email,prof?.avatar_url||null);
-  } else {
-    await updateAuthUI(null,null,null);
-  }
-  await loadGallery();
-});
-
-async function initializeAuth(){
-  let session=null;
-  const sessionResult=await supabase.auth.getSession();
-  session=sessionResult&&sessionResult.data?sessionResult.data.session:null;
-  if(!session){
-    const refreshed=await supabase.auth.refreshSession().catch(()=>null);
-    session=refreshed&&refreshed.data?refreshed.data.session:null;
-  }
-  if(session){
-    const{data:prof}=await supabase.from('profiles').select('username,avatar_url').eq('id',session.user.id).single();
-    await updateAuthUI(session.user,prof?.username||session.user.email?.split('@')[0]||session.user.email,prof?.avatar_url||null);
+    const { data: prof } = await supabase.from('profiles').select('username,avatar_url').eq('id',session.user.id).single();
+    await updateAuthUI(session.user,prof?.username||session.user.email,prof?.avatar_url||null);
   } else {
     await updateAuthUI(null,null,null);
   }
   await loadGallery();
 }
+
+supabase.auth.onAuthStateChange(async(_,session)=>{
+  if(session){
+    const{data:prof}=await supabase.from('profiles').select('username,avatar_url').eq('id',session.user.id).single();
+    await updateAuthUI(session.user,prof?.username||session.user.email,prof?.avatar_url||null);
+  } else {
+    await updateAuthUI(null,null,null);
+  }
+  await loadGallery();
+});
 
 // ---- GALLERY ----
 function fmtDate(iso){const d=new Date(iso);return d.toLocaleDateString('pl-PL',{day:'2-digit',month:'2-digit',year:'numeric'});}
@@ -563,7 +554,7 @@ function renderTeam(){
       const menu=document.getElementById('menu');
       menu.style.left=e.clientX+'px';menu.style.top=e.clientY+'px';
       document.getElementById('menuTitle').textContent=`${p.name} - ${p.agent}`;
-      document.getElementById('profileMenuLink').href=`profil.html?user=${encodeURIComponent(p.name)}`;
+      document.getElementById('profilePlayerLink').href=`profil.html?user=${encodeURIComponent(p.name)}`;
       document.getElementById('lineupLink').href=lineupLinks[p.agent]||'#';
       document.getElementById('statsLink').href=statsLinks[p.name]||'#';
       profileDropdown.classList.remove('active');refreshConfirm.classList.remove('active');
@@ -591,8 +582,8 @@ function updateHistoryBtn(){
 
 // ---- I18N ----
 const translations={
-  pl:{infoTitle:'Info',dateLabel:'Data',timeLabel:'Godzina',matchesLabel:'Mecze',mapLabel:'Mapa',premierScore:'Premier Score',scoreInfo:'Min. 500 Premier Score aby zakwalifikować się do playoffs',teamTitle:'Ekipa',historyTitle:'Historia',galleryTitle:'Galeria',expand:'Rozwin',collapse:'Zwin',usefulLinks:'Przydatne linki',themeLabel:'Motyw',themeDark:'Ciemny',themeLight:'Jasny',languageLabel:'Język',mapTitlePrefix:'Mapa',titleSubtitle:'Panel drużyny premierowej',reserveBadge:'Rezerwowy',accountLabel:'Konto',profileLabel:'Profil',agentLabel:'Agent',statsLabel:'Statystyki',loginTitle:'Logowanie',rememberLabel:'Zapamiętaj mnie',loginAction:'Zaloguj się',refreshConfirmTitle:'Potwierdzenie',refreshConfirmText:'Czy na pewno chcesz odświeżyć stronę?',cancelAction:'Anuluj',refreshAction:'Odśwież'},
-  en:{infoTitle:'Info',dateLabel:'Date',timeLabel:'Time',matchesLabel:'Matches',mapLabel:'Map',premierScore:'Premier Score',scoreInfo:'Minimum 500 Premier Score is required to qualify for playoffs',teamTitle:'Team',historyTitle:'History',galleryTitle:'Gallery',expand:'Expand',collapse:'Collapse',usefulLinks:'Useful links',themeLabel:'Theme',themeDark:'Dark',themeLight:'Light',languageLabel:'Language',mapTitlePrefix:'Map',titleSubtitle:'Premier Team Dashboard',reserveBadge:'Reserve',accountLabel:'Account',profileLabel:'Profile',agentLabel:'Agent',statsLabel:'Stats',loginTitle:'Login',rememberLabel:'Remember me',loginAction:'Sign in',refreshConfirmTitle:'Confirmation',refreshConfirmText:'Are you sure you want to refresh the page?',cancelAction:'Cancel',refreshAction:'Refresh'}
+  pl:{infoTitle:'Info',dateLabel:'Data',timeLabel:'Godzina',matchesLabel:'Mecze',mapLabel:'Mapa',premierScore:'Premier Score',scoreInfo:'Min. 500 Premier Score aby zakwalifikować się do playoffs',teamTitle:'Ekipa',historyTitle:'Historia',galleryTitle:'Galeria',expand:'Rozwin',collapse:'Zwin',usefulLinks:'Przydatne linki',themeLabel:'Motyw',themeDark:'Ciemny',themeLight:'Jasny',languageLabel:'Język',mapTitlePrefix:'Mapa',titleSubtitle:'Panel drużyny premierowej',reserveBadge:'Rezerwowy'},
+  en:{infoTitle:'Info',dateLabel:'Date',timeLabel:'Time',matchesLabel:'Matches',mapLabel:'Map',premierScore:'Premier Score',scoreInfo:'Minimum 500 Premier Score is required to qualify for playoffs',teamTitle:'Team',historyTitle:'History',galleryTitle:'Gallery',expand:'Expand',collapse:'Collapse',usefulLinks:'Useful links',themeLabel:'Theme',themeDark:'Dark',themeLight:'Light',languageLabel:'Language',mapTitlePrefix:'Map',titleSubtitle:'Premier Team Dashboard',reserveBadge:'Reserve'}
 };
 function T(){return translations[currentLang];}
 
@@ -602,19 +593,6 @@ function applyLang(lang){
   ['teamTitle','historyTitle','galleryTitle'].forEach(k=>{const el=document.querySelector(`[data-static-label="${k}"]`);if(el)el.textContent=T()[k];});
   document.getElementById('pageTitle').dataset.subtitle=T().titleSubtitle;
   document.getElementById('languageToggleValue').textContent=lang.toUpperCase();
-  document.querySelector('#loginToggle .login-action-label').textContent=T().accountLabel;
-  document.querySelector('#themeToggle .theme-toggle-label').textContent=T().themeLabel;
-  document.querySelector('#languageToggle .theme-toggle-label').textContent=T().languageLabel;
-  document.getElementById('profileMenuLink').textContent=T().profileLabel;
-  document.getElementById('lineupLink').textContent=T().agentLabel;
-  document.getElementById('statsLink').textContent=T().statsLabel;
-  document.querySelector('#loginModal .modal-header h3').textContent=T().loginTitle;
-  document.querySelector('.login-remember span').textContent=T().rememberLabel;
-  document.getElementById('loginBtn').textContent=T().loginAction;
-  document.querySelector('.refresh-confirm-title').textContent=T().refreshConfirmTitle;
-  document.querySelector('.refresh-confirm-text').textContent=T().refreshConfirmText;
-  document.querySelectorAll('.refresh-confirm-btn')[0].textContent=T().cancelAction;
-  document.getElementById('refreshConfirmBtn').textContent=T().refreshAction;
   if(currentMapName)document.getElementById('mapTitle').textContent=`${T().mapTitlePrefix}: ${currentMapName}`;
   renderTeam();updateHistoryBtn();
   applyTheme(document.body.classList.contains('light-theme')?'light':'dark');
@@ -635,7 +613,7 @@ document.getElementById('languageToggle').addEventListener('click',()=>applyLang
 
 applyLang(currentLang);
 applyTheme(localStorage.getItem('eter-theme')==='light'?'light':'dark');
-initializeAuth();
+restoreAuthSession();
 </script>
 </body>
 </html>
