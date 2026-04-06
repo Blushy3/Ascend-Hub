@@ -723,9 +723,9 @@ document.getElementById('avatarFileInput').addEventListener('change',async e=>{
   if(file.size>3*1024*1024){alert('Maks. 3 MB dla avatara.');return;}
   const ext=file.name.split('.').pop();
   const fname=`avatar_${viewedUsername}.${ext}`;
-  const{error:se}=await supabase.storage.from('EterGallery').upload(fname,file,{upsert:true});
+  const{error:se}=await supabase.storage.from('EterStorage').upload(fname,file,{upsert:true});
   if(se){alert('Błąd uploadu: '+se.message);return;}
-  const{data:ud}=supabase.storage.from('EterGallery').getPublicUrl(fname);
+  const{data:ud}=supabase.storage.from('EterStorage').getPublicUrl(fname);
   await supabase.rpc('update_profile_assets_by_code',{p_username:viewedUsername,p_code:access.code,p_avatar_url:ud.publicUrl+'?t='+Date.now(),p_banner_url:null});
   const av=document.getElementById('profAvatar');
   av.innerHTML=`<img src="${ud.publicUrl}?t=${Date.now()}" alt="">`;
@@ -738,9 +738,9 @@ document.getElementById('bannerFileInput').addEventListener('change',async e=>{
   if(file.size>5*1024*1024){alert('Maks. 5 MB dla bannera.');return;}
   const ext=file.name.split('.').pop();
   const fname=`banner_${viewedUsername}.${ext}`;
-  const{error:se}=await supabase.storage.from('EterGallery').upload(fname,file,{upsert:true});
+  const{error:se}=await supabase.storage.from('EterStorage').upload(fname,file,{upsert:true});
   if(se){alert('Błąd uploadu: '+se.message);return;}
-  const{data:ud}=supabase.storage.from('EterGallery').getPublicUrl(fname);
+  const{data:ud}=supabase.storage.from('EterStorage').getPublicUrl(fname);
   await supabase.rpc('update_profile_assets_by_code',{p_username:viewedUsername,p_code:access.code,p_avatar_url:null,p_banner_url:ud.publicUrl+'?t='+Date.now()});
   const bi=document.getElementById('bannerImg');
   bi.src=ud.publicUrl+'?t='+Date.now();bi.style.display='block';
