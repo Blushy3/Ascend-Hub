@@ -265,11 +265,11 @@ body.light-theme .theme-toggle-indicator{background:linear-gradient(135deg,#fff3
 .login-input{padding:12px 16px;border-radius:12px;border:1px solid var(--card-border);background:var(--card-bg-strong);color:var(--text-color);font:inherit;font-size:14px;outline:none;transition:border-color .2s,box-shadow .2s;}
 .login-input:focus{border-color:rgba(255,70,85,.5);box-shadow:0 0 0 3px rgba(255,70,85,.1);}
 .login-remember{display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13px;color:var(--muted-text);user-select:none;}
-.login-remember input{width:16px;height:16px;accent-color:var(--accent);cursor:pointer;}
+.login-remember input{width:16px;height:16px;accent-color:var(--accent);cursor:pointer}
 .login-btn{padding:14px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent-soft));border:none;color:#fff;font:inherit;font-size:14px;font-weight:700;cursor:pointer;letter-spacing:.08em;transition:transform .2s,box-shadow .2s;}
 .login-btn:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(255,70,85,.35);}
-.login-btn:disabled{opacity:.6;cursor:not-allowed;transform:none;}
-.login-error{font-size:13px;color:var(--accent);text-align:center;min-height:20px;}
+.login-btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.login-error{font-size:13px;color:var(--accent);text-align:center;min-height:20px}
 .login-title{font-size:22px;font-weight:700;text-align:center;margin:0 0 4px;-webkit-text-fill-color:var(--text-color);}
 
 /* SAVE STATUS */
@@ -453,10 +453,6 @@ body.light-theme .theme-toggle-indicator{background:linear-gradient(135deg,#fff3
     <span class="login-action-avatar" id="loginAvatar">?</span>
     <span class="login-action-text"><span class="login-action-label">Konto</span><span class="login-action-value" id="loginActionValue">Zaloguj</span></span>
   </button>
-  <button class="control-action theme-toggle" id="themeToggle" type="button" style="padding-right:16px">
-    <span class="theme-toggle-indicator"></span>
-    <span class="theme-toggle-text"><span class="theme-toggle-label">Motyw</span><span class="theme-toggle-value" id="themeToggleValue">Ciemny</span></span>
-  </button>
   <button class="control-action language-toggle" id="languageToggle" type="button">
     <span class="theme-toggle-text"><span class="theme-toggle-label">Język</span><span class="theme-toggle-value" id="languageToggleValue">PL</span></span>
   </button>
@@ -467,8 +463,7 @@ body.light-theme .theme-toggle-indicator{background:linear-gradient(135deg,#fff3
 import{createClient}from'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 const SB_URL='https://zllishknfqylpommgnew.supabase.co';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpsbGlzaGtuZnF5bHBvbW1nbmV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzOTk4MDksImV4cCI6MjA5MDk3NTgwOX0.Tm7ZGifcT5Y2kBJxaTUK_ASQruVcpHrM9UDMtmQiT4A';
-const AUTH_STORAGE_KEY='eter-session';
-const supabase=createClient(SB_URL,SB_KEY,{auth:{persistSession:true,storageKey:AUTH_STORAGE_KEY,storage:localStorage,autoRefreshToken:true,detectSessionInUrl:false}});
+const supabase=createClient(SB_URL,SB_KEY,{auth:{persistSession:true,storageKey:'eter-session',storage:localStorage,autoRefreshToken:true,detectSessionInUrl:false}});
 
 let viewedUsername=null;
 let viewedProfile=null;
@@ -485,206 +480,74 @@ const u2e={blushyk:'blushyk@eter.gg',tengrubytyp:'tengrubytyp@eter.gg',ratatuii:
 const params=new URLSearchParams(location.search);
 viewedUsername=params.get('user');
 
-const profileTranslations={
-  pl:{
-    back:'← Wróć',
-    editProfile:'✎ Edytuj profil',
-    about:'O mnie',
-    galleryStats:'Statystyki (galeria)',
-    photos:'Zdjęć',
-    joined:'Dołączył',
-    team:'Drużyna',
-    links:'Linki',
-    addLink:'+ Dodaj link',
-    add:'Dodaj',
-    playerGallery:'Galeria gracza',
-    noPhotos:'📷 Brak zdjęć',
-    login:'Zaloguj',
-    account:'Konto',
-    loggedAs:'Zalogowany jako',
-    viewProfile:'👤 Zobacz profil',
-    logout:'🚪 Wyloguj się',
-    confirm:'Potwierdzenie',
-    refreshQuestion:'Czy na pewno chcesz odświeżyć stronę?',
-    cancel:'Anuluj',
-    refresh:'Odśwież',
-    theme:'Motyw',
-    dark:'Ciemny',
-    light:'Jasny',
-    language:'Język',
-    loginTitle:'Logowanie',
-    remember:'Zapamiętaj mnie',
-    loginAction:'Zaloguj się',
-    unknownLogin:'Nieznany login.',
-    badCreds:'Błędne hasło lub login.',
-    editPanel:'✎ Edytuj profil',
-    displayName:'Nick wyświetlany',
-    bio:'Bio / Opis',
-    tracker:'Link do Trackera (pełny URL)',
-    profileStyle:'Styl profilu',
-    avatarFrame:'Ramka avatara',
-    saveChanges:'💾 Zapisz zmiany'
-  },
-  en:{
-    back:'← Back',
-    editProfile:'✎ Edit profile',
-    about:'About me',
-    galleryStats:'Stats (gallery)',
-    photos:'Photos',
-    joined:'Joined',
-    team:'Team',
-    links:'Links',
-    addLink:'+ Add link',
-    add:'Add',
-    playerGallery:'Player gallery',
-    noPhotos:'📷 No photos',
-    login:'Login',
-    account:'Account',
-    loggedAs:'Logged in as',
-    viewProfile:'👤 View profile',
-    logout:'🚪 Log out',
-    confirm:'Confirmation',
-    refreshQuestion:'Are you sure you want to refresh the page?',
-    cancel:'Cancel',
-    refresh:'Refresh',
-    theme:'Theme',
-    dark:'Dark',
-    light:'Light',
-    language:'Language',
-    loginTitle:'Login',
-    remember:'Remember me',
-    loginAction:'Sign in',
-    unknownLogin:'Unknown login.',
-    badCreds:'Invalid login or password.',
-    editPanel:'✎ Edit profile',
-    displayName:'Display name',
-    bio:'Bio / About',
-    tracker:'Tracker link (full URL)',
-    profileStyle:'Profile style',
-    avatarFrame:'Avatar frame',
-    saveChanges:'💾 Save changes'
-  }
-};
-
-function applyChromeLanguage(){
-  document.documentElement.lang=currentLang;
-  const t=profileTranslations[currentLang]||profileTranslations.pl;
-  document.getElementById('languageToggleValue').textContent=currentLang.toUpperCase();
-  document.querySelector('.back-btn').textContent=t.back;
-  document.getElementById('editOpenBtn').textContent=t.editProfile;
-  document.querySelectorAll('.prof-section-title')[0].textContent=t.about;
-  document.querySelectorAll('.prof-section-title')[1].textContent=t.galleryStats;
-  document.querySelectorAll('.prof-stat-label')[0].textContent=t.photos;
-  document.querySelectorAll('.prof-stat-label')[1].textContent=t.joined;
-  document.querySelectorAll('.prof-stat-label')[2].textContent=t.team;
-  document.querySelectorAll('.prof-section-title')[2].textContent=t.links;
-  document.querySelector('.prof-add-link-btn').textContent=t.addLink;
-  document.querySelector('.prof-link-save-btn').textContent=t.add;
-  document.querySelectorAll('.prof-section-title')[3].textContent=t.playerGallery;
-  document.getElementById('profGalleryEmpty').textContent=t.noPhotos;
-  document.querySelector('#loginModal .modal-header h3').textContent=t.loginTitle;
-  document.querySelector('.login-remember span').textContent=t.remember;
-  document.getElementById('loginBtn').textContent=t.loginAction;
-  document.querySelector('#profileDropdown .profile-dropdown-name span').textContent=t.loggedAs;
-  document.getElementById('profileLink').textContent=t.viewProfile;
-  document.querySelector('#profileDropdown .profile-dropdown-item.logout').textContent=t.logout;
-  document.querySelector('.refresh-confirm-title').textContent=t.confirm;
-  document.querySelector('.refresh-confirm-text').textContent=t.refreshQuestion;
-  document.querySelectorAll('.refresh-confirm-btn')[0].textContent=t.cancel;
-  document.getElementById('refreshConfirmBtn').textContent=t.refresh;
-  document.querySelector('#loginToggle .login-action-label').textContent=t.account;
-  document.querySelector('#themeToggle .theme-toggle-label').textContent=t.theme;
-  document.querySelector('#languageToggle .theme-toggle-label').textContent=t.language;
-  document.getElementById('editPanel').querySelector('h2').textContent=t.editPanel;
-  document.querySelectorAll('.prof-edit-section-label')[0].textContent=t.displayName;
-  document.querySelectorAll('.prof-edit-section-label')[1].textContent=t.bio;
-  document.querySelectorAll('.prof-edit-section-label')[2].textContent=t.tracker;
-  document.querySelectorAll('.prof-edit-section-label')[3].textContent=t.profileStyle;
-  document.querySelectorAll('.prof-edit-section-label')[4].textContent=t.avatarFrame;
-  document.getElementById('editSaveBtn').textContent=t.saveChanges;
-  document.getElementById('themeToggleValue').textContent=document.body.classList.contains('light-theme')?t.light:t.dark;
-}
-
 async function updateAuthUI(user,username,avatarUrl){
   sessionUser=user||null;
   currentUsername=username||null;
-  const avatar=document.getElementById('loginAvatar');
-  const label=document.getElementById('loginActionValue');
-  const dropdownName=document.getElementById('dropdownUsername');
-  const profileLink=document.getElementById('profileLink');
-
+  const av=document.getElementById('loginAvatar');
+  const val=document.getElementById('loginActionValue');
+  const dname=document.getElementById('dropdownUsername');
+  const plink=document.getElementById('profileLink');
   if(user&&username){
-    label.textContent=username;
-    dropdownName.textContent=username;
-    if(avatarUrl){
-      avatar.innerHTML=`<img src="${avatarUrl}" alt="${username}">`;
-    } else {
-      avatar.textContent=username.charAt(0).toUpperCase();
-    }
-    profileLink.href=`profil.html?user=${encodeURIComponent(username)}`;
-    return;
+    val.textContent=username;
+    dname.textContent=username;
+    if(avatarUrl){av.innerHTML=`<img src="${avatarUrl}" alt="${username}">`;}
+    else{av.textContent=username.charAt(0).toUpperCase();}
+    if(plink)plink.href=`profil.html?user=${encodeURIComponent(username)}`;
+  } else {
+    val.textContent='Zaloguj';
+    dname.textContent='—';
+    av.textContent='?';
+    av.innerHTML='?';
   }
-
-  label.textContent=(profileTranslations[currentLang]||profileTranslations.pl).login;
-  dropdownName.textContent='—';
-  avatar.textContent='?';
-  avatar.innerHTML='?';
-  profileLink.href='profil.html';
 }
 
-window.handleLogin=async function(){
-  const username=document.getElementById('loginUsername').value.trim().toLowerCase();
-  const password=document.getElementById('loginPassword').value;
-  const button=document.getElementById('loginBtn');
-  const errorBox=document.getElementById('loginError');
-  const email=u2e[username];
-  errorBox.textContent='';
-  if(!email){errorBox.textContent=(profileTranslations[currentLang]||profileTranslations.pl).unknownLogin;return;}
-  button.disabled=true;
-  button.textContent='Logowanie...';
-  localStorage.removeItem(AUTH_STORAGE_KEY);
-  sessionStorage.removeItem(AUTH_STORAGE_KEY);
-
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
-  if(error){
-    errorBox.textContent='Błędne hasło lub login.';
-    button.disabled=false;
-    button.textContent='Zaloguj się';
-    return;
-  }
-
-  button.disabled=false;
-  button.textContent='Zaloguj się';
-  closeLoginModal();
-};
-
-window.handleLogout=async function(){
-  await supabase.auth.signOut();
-  localStorage.removeItem(AUTH_STORAGE_KEY);
-  sessionStorage.removeItem(AUTH_STORAGE_KEY);
-  document.getElementById('profileDropdown').classList.remove('active');
-};
-
-async function initializeSharedAuth(){
-  let session=null;
-  const sessionResult=await supabase.auth.getSession();
-  session=sessionResult&&sessionResult.data?sessionResult.data.session:null;
-  if(!session){
-    const refreshed=await supabase.auth.refreshSession().catch(()=>null);
-    session=refreshed&&refreshed.data?refreshed.data.session:null;
-  }
+async function restoreAuthSession(){
+  const { data: { session } } = await supabase.auth.getSession();
   if(session){
-    const { data: profile } = await supabase.from('profiles').select('username,avatar_url').eq('id', session.user.id).single();
-    await updateAuthUI(session.user,profile?.username||session.user.email?.split('@')[0]||session.user.email,profile?.avatar_url||null);
+    const { data: prof } = await supabase.from('profiles').select('username,avatar_url').eq('id',session.user.id).single();
+    await updateAuthUI(session.user,prof?.username||session.user.email,prof?.avatar_url||null);
   } else {
     await updateAuthUI(null,null,null);
   }
 }
 
+window.handleLogin=async function(){
+  const u=document.getElementById('loginUsername').value.trim().toLowerCase();
+  const p=document.getElementById('loginPassword').value;
+  const remember=document.getElementById('rememberMe').checked;
+  const btn=document.getElementById('loginBtn');
+  const err=document.getElementById('loginError');
+  err.textContent='';
+  const email=u2e[u];
+  if(!email){err.textContent='Nieznany login.';return;}
+  btn.disabled=true;btn.textContent='Logowanie...';
+
+  if(!remember){
+    sessionStorage.setItem('eter-no-remember','1');
+  } else {
+    sessionStorage.removeItem('eter-no-remember');
+  }
+
+  const { error } = await supabase.auth.signInWithPassword({ email, password:p });
+  if(error){err.textContent='Błędne hasło lub login.';btn.disabled=false;btn.textContent='Zaloguj się';return;}
+  closeLoginModal();
+};
+
+window.handleLogout=async function(){
+  await supabase.auth.signOut();
+  document.getElementById('profileDropdown').classList.remove('active');
+};
+
+window.addEventListener('beforeunload',()=>{
+  if(sessionStorage.getItem('eter-no-remember')==='1'){
+    supabase.auth.signOut();
+  }
+});
+
 supabase.auth.onAuthStateChange(async(_,session)=>{
   if(session){
-    const { data: profile } = await supabase.from('profiles').select('username,avatar_url').eq('id', session.user.id).single();
-    await updateAuthUI(session.user,profile?.username||session.user.email?.split('@')[0]||session.user.email,profile?.avatar_url||null);
+    const { data: prof } = await supabase.from('profiles').select('username,avatar_url').eq('id',session.user.id).single();
+    await updateAuthUI(session.user,prof?.username||session.user.email,prof?.avatar_url||null);
   } else {
     await updateAuthUI(null,null,null);
   }
@@ -745,11 +608,17 @@ function renderProfile(prof){
   if(prof.tracker_url){tl.href=prof.tracker_url;tl.style.display='inline-flex';}
   else{tl.style.display='none';}
 
-  // Profile motifs disabled for now
-  applyProfileTheme('prof-default');
-  applyFrame('none');
-  pendingProfileTheme='prof-default';
-  pendingFrameStyle='none';
+  // Profile theme
+  const theme=prof.profile_style||'prof-default';
+  applyProfileTheme(theme);
+  document.querySelectorAll('.theme-swatch').forEach(s=>{s.classList.toggle('active',s.dataset.theme===theme);});
+  pendingProfileTheme=theme;
+
+  // Frame
+  const frame=prof.frame_style||'none';
+  applyFrame(frame);
+  document.querySelectorAll('.frame-opt').forEach(f=>{f.classList.toggle('active',f.dataset.frame===frame);});
+  pendingFrameStyle=frame;
 
   // Social links
   socialLinks=Array.isArray(prof.social_links)?prof.social_links:[];
@@ -815,7 +684,7 @@ window.closeEditPanel=function(){
   document.getElementById('blur-overlay').classList.remove('active');
 };
 document.getElementById('blur-overlay').addEventListener('click',()=>{
-  closeEditPanel();closeLightbox();closeLoginModal();
+  closeEditPanel();closeLightbox();
 });
 
 window.selectTheme=function(theme,el){
@@ -840,6 +709,8 @@ window.saveProfile=async function(){
     display_name:displayName||null,
     bio:bio||null,
     tracker_url:trackerUrl||null,
+    profile_style:pendingProfileTheme,
+    frame_style:pendingFrameStyle,
     social_links:socialLinks
   }).eq('id',sessionUser.id);
 
@@ -912,7 +783,6 @@ window.openLightbox=function(src){document.getElementById('lightboxImg').src=src
 window.closeLightbox=function(){document.getElementById('lightbox').classList.remove('active');};
 document.getElementById('lightbox').addEventListener('click',e=>{if(e.target===document.getElementById('lightbox'))closeLightbox();});
 
-// ---- SHARED PANEL ----
 const blurOverlay=document.getElementById('blur-overlay');
 const loginModal=document.getElementById('loginModal');
 const profileDropdown=document.getElementById('profileDropdown');
@@ -921,8 +791,8 @@ const loginToggle=document.getElementById('loginToggle');
 const refreshButton=document.getElementById('refreshButton');
 
 function closeAllPopups(){
-  profileDropdown.classList.remove('active');
   refreshConfirm.classList.remove('active');
+  profileDropdown.classList.remove('active');
 }
 
 window.closeLoginModal=function(){
@@ -937,14 +807,8 @@ window.hideRefreshConfirm=function(){
 
 loginToggle.addEventListener('click',e=>{
   e.stopPropagation();
-  if(sessionUser){
-    closeAllPopups();
-    profileDropdown.classList.toggle('active');
-    return;
-  }
-  closeAllPopups();
-  blurOverlay.classList.add('active');
-  loginModal.classList.add('active');
+  if(sessionUser){closeAllPopups();profileDropdown.classList.toggle('active');}
+  else{closeAllPopups();blurOverlay.classList.add('active');loginModal.classList.add('active');}
 });
 
 refreshButton.addEventListener('click',e=>{
@@ -958,11 +822,10 @@ document.getElementById('refreshConfirmBtn').addEventListener('click',()=>{
   location.reload(true);
 });
 
-document.getElementById('loginUsername').addEventListener('keydown',e=>{
-  if(e.key==='Enter')document.getElementById('loginPassword').focus();
-});
-document.getElementById('loginPassword').addEventListener('keydown',e=>{
-  if(e.key==='Enter')handleLogin();
+blurOverlay.addEventListener('click',()=>{
+  closeEditPanel();
+  closeLightbox();
+  closeLoginModal();
 });
 
 window.addEventListener('click',e=>{
@@ -970,32 +833,20 @@ window.addEventListener('click',e=>{
   if(!profileDropdown.contains(e.target)&&!loginToggle.contains(e.target))profileDropdown.classList.remove('active');
 });
 
-// ---- THEME TOGGLE (page theme, not profile theme) ----
-function applyTheme(theme){
-  const light=theme==='light';
-  document.body.classList.toggle('light-theme',light);
-  const t=profileTranslations[currentLang]||profileTranslations.pl;
-  document.getElementById('themeToggleValue').textContent=light?t.light:t.dark;
-  localStorage.setItem('eter-theme',light?'light':'dark');
+document.getElementById('loginUsername').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('loginPassword').focus();});
+document.getElementById('loginPassword').addEventListener('keydown',e=>{if(e.key==='Enter')handleLogin();});
+
+function applyLang(lang){
+  currentLang=lang;
+  document.documentElement.lang=lang;
+  localStorage.setItem('eter-language',lang);
+  document.getElementById('languageToggleValue').textContent=lang.toUpperCase();
 }
-document.getElementById('themeToggle').addEventListener('click',()=>applyTheme(document.body.classList.contains('light-theme')?'dark':'light'));
-document.getElementById('languageToggle').addEventListener('click',()=>{
-  currentLang=currentLang==='pl'?'en':'pl';
-  localStorage.setItem('eter-language',currentLang);
-  applyChromeLanguage();
-});
-applyTheme(localStorage.getItem('eter-theme')==='light'?'light':'dark');
-applyChromeLanguage();
+document.getElementById('languageToggle').addEventListener('click',()=>applyLang(currentLang==='pl'?'en':'pl'));
+applyLang(currentLang);
 
-async function bootstrap(){
-  await initializeSharedAuth();
-  await init();
-}
-
-bootstrap();
-
-document.getElementById('themePicker').closest('.prof-edit-section').style.display='none';
-document.getElementById('framePicker').closest('.prof-edit-section').style.display='none';
+restoreAuthSession();
+init();
 </script>
 </body>
 </html>
