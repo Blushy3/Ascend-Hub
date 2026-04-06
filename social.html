@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Social - ETER VANGUARDS</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:radial-gradient(circle at top,#1a1a2e,#0a0a0f 62%);
+  --text:#fff;
+  --muted:#bfc5dd;
+  --card:rgba(255,255,255,.05);
+  --border:rgba(255,255,255,.1);
+  --accent:#ff4655;
+  --accent-soft:#ff7a85;
+}
+html,body{margin:0;padding:0;min-height:100%;font-family:'Poppins',sans-serif;background:var(--bg) no-repeat fixed;background-size:cover;color:var(--text)}
+.page{max-width:1100px;margin:0 auto;padding:32px 20px 120px}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:28px}
+.back{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:999px;border:1px solid var(--border);background:var(--card);color:var(--text);text-decoration:none;font-weight:600}
+.hero{padding:28px;border-radius:28px;border:1px solid var(--border);background:linear-gradient(135deg,rgba(255,255,255,.06),rgba(255,255,255,.02));box-shadow:0 26px 70px rgba(0,0,0,.24);margin-bottom:24px}
+.hero-kicker{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.hero-title{font-size:clamp(32px,5vw,52px);font-weight:700;line-height:1.02;margin-bottom:10px}
+.hero-text{max-width:760px;color:var(--muted);line-height:1.7}
+.grid{display:grid;grid-template-columns:1.1fr .9fr;gap:20px}
+.card{padding:22px;border-radius:24px;border:1px solid var(--border);background:var(--card);backdrop-filter:blur(18px);box-shadow:0 24px 60px rgba(0,0,0,.18)}
+.card-title{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.thread{display:flex;flex-direction:column;gap:12px}
+.bubble{padding:14px 16px;border-radius:18px;max-width:80%;line-height:1.55}
+.bubble.me{align-self:flex-end;background:linear-gradient(135deg,var(--accent),var(--accent-soft))}
+.bubble.them{align-self:flex-start;background:rgba(255,255,255,.08)}
+.friend{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid var(--border);margin-bottom:10px}
+.friend-meta{display:flex;align-items:center;gap:10px}
+.friend-avatar{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--accent),var(--accent-soft));font-weight:700}
+.friend-name{font-weight:600}
+.friend-status{font-size:12px;color:var(--muted)}
+.pill{display:inline-flex;align-items:center;justify-content:center;padding:8px 12px;border-radius:999px;background:rgba(255,255,255,.08);font-size:12px;font-weight:700}
+.note{margin-top:18px;color:var(--muted);line-height:1.7}
+@media(max-width:860px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="topbar">
+    <a class="back" href="index.html">← Wróć</a>
+  </div>
+  <div class="hero">
+    <div class="hero-kicker">Social</div>
+    <div class="hero-title">Wiadomości i znajomi</div>
+    <div class="hero-text">To jest przygotowany ekran pod kolejny etap. W następnym kroku podepniemy tu prawdziwą listę znajomych, prywatne wiadomości, zaproszenia i aktywność społeczności z Supabase.</div>
+  </div>
+  <div class="grid">
+    <div class="card">
+      <div class="card-title">Podgląd rozmowy</div>
+      <div class="thread">
+        <div class="bubble them">Siema, gramy dziś premier o 21:00?</div>
+        <div class="bubble me">Tak, wrzucę też post po meczu.</div>
+        <div class="bubble them">Dawaj, będzie tu potem ładny feed.</div>
+      </div>
+      <div class="note">Na ten moment to tylko szkic UI. Gdy przejdziemy do etapu social, ten ekran dostanie prawdziwe konwersacje i wysyłanie wiadomości.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Znajomi</div>
+      <div class="friend"><div class="friend-meta"><div class="friend-avatar">F</div><div><div class="friend-name">Future</div><div class="friend-status">Online</div></div></div><span class="pill">DM</span></div>
+      <div class="friend"><div class="friend-meta"><div class="friend-avatar">M</div><div><div class="friend-name">Mdzer</div><div class="friend-status">Offline</div></div></div><span class="pill">View</span></div>
+      <div class="friend"><div class="friend-meta"><div class="friend-avatar">L</div><div><div class="friend-name">Licz1</div><div class="friend-status">Online</div></div></div><span class="pill">View</span></div>
+      <div class="note">Docelowo to miejsce będzie zsynchronizowane z profilem i listą znajomych w prawym dolnym rogu.</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
