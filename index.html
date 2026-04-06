@@ -326,31 +326,7 @@ import{createClient}from'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm
 const SB_URL='https://zllishknfqylpommgnew.supabase.co';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpsbGlzaGtuZnF5bHBvbW1nbmV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzOTk4MDksImV4cCI6MjA5MDk3NTgwOX0.Tm7ZGifcT5Y2kBJxaTUK_ASQruVcpHrM9UDMtmQiT4A';
 const AUTH_STORAGE_KEY='eter-session';
-const AUTH_MODE_KEY='eter-auth-mode';
-function getAuthStorageMode(){return localStorage.getItem(AUTH_MODE_KEY)==='local'?'local':'session';}
-const authStorage={
-  getItem(key){
-    const preferredStorage=getAuthStorageMode()==='local'?localStorage:sessionStorage;
-    const fallbackStorage=getAuthStorageMode()==='local'?sessionStorage:localStorage;
-    const preferredValue=preferredStorage.getItem(key);
-    if(preferredValue!==null)return preferredValue;
-    return fallbackStorage.getItem(key);
-  },
-  setItem(key,value){
-    if(getAuthStorageMode()==='local'){
-      localStorage.setItem(key,value);
-      sessionStorage.removeItem(key);
-      return;
-    }
-    sessionStorage.setItem(key,value);
-    localStorage.removeItem(key);
-  },
-  removeItem(key){
-    localStorage.removeItem(key);
-    sessionStorage.removeItem(key);
-  }
-};
-const supabase=createClient(SB_URL,SB_KEY,{auth:{persistSession:true,storageKey:AUTH_STORAGE_KEY,storage:authStorage,autoRefreshToken:true,detectSessionInUrl:false}});
+const supabase=createClient(SB_URL,SB_KEY,{auth:{persistSession:true,storageKey:AUTH_STORAGE_KEY,storage:localStorage,autoRefreshToken:true,detectSessionInUrl:false}});
 
 const GALLERY_LIMIT=6;
 let currentUser=null,currentUsername=null,currentUserId=null;
@@ -366,15 +342,14 @@ const u2e={blushyk:'blushyk@eter.gg',tengrubytyp:'tengrubytyp@eter.gg',ratatuii:
 window.handleLogin=async function(){
   const u=document.getElementById('loginUsername').value.trim().toLowerCase();
   const p=document.getElementById('loginPassword').value;
-  const remember=document.getElementById('rememberMe').checked;
   const btn=document.getElementById('loginBtn');
   const err=document.getElementById('loginError');
   err.textContent='';
   const email=u2e[u];
   if(!email){err.textContent='Nieznany login. Sprawdź pisownię.';return;}
   btn.disabled=true;btn.textContent='Logowanie...';
-  localStorage.setItem(AUTH_MODE_KEY,remember?'local':'session');
-  authStorage.removeItem(AUTH_STORAGE_KEY);
+  localStorage.removeItem(AUTH_STORAGE_KEY);
+  sessionStorage.removeItem(AUTH_STORAGE_KEY);
   /*
 
   // Ustaw długość sesji
@@ -391,13 +366,14 @@ window.handleLogin=async function(){
   const{error}=await supabase.auth.signInWithPassword({email,password:p});
   if(error){err.textContent='Błędne hasło lub login.';btn.disabled=false;btn.textContent='Zaloguj się';return;}
   btn.disabled=false;btn.textContent='Zaloguj siÄ™';
+  btn.textContent='Zaloguj się';
   closeLoginModal();
 };
 
 window.handleLogout=async function(){
   await supabase.auth.signOut();
-  authStorage.removeItem(AUTH_STORAGE_KEY);
-  localStorage.removeItem(AUTH_MODE_KEY);
+  localStorage.removeItem(AUTH_STORAGE_KEY);
+  sessionStorage.removeItem(AUTH_STORAGE_KEY);
   document.getElementById('profileDropdown').classList.remove('active');
 };
 
