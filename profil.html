@@ -460,10 +460,7 @@ body.light-theme .theme-toggle-indicator{background:linear-gradient(135deg,#fff3
 </div>
 
 <script type="module">
-import{createClient}from'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-const SB_URL='https://zllishknfqylpommgnew.supabase.co';
-const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpsbGlzaGtuZnF5bHBvbW1nbmV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzOTk4MDksImV4cCI6MjA5MDk3NTgwOX0.Tm7ZGifcT5Y2kBJxaTUK_ASQruVcpHrM9UDMtmQiT4A';
-const supabase=createClient(SB_URL,SB_KEY,{auth:{persistSession:true,autoRefreshToken:true}});
+import { supabase, initEterAuth } from './auth.js';
 
 let viewedUsername=null;
 let viewedProfile=null;
@@ -474,6 +471,22 @@ let pendingProfileTheme='prof-default';
 let pendingFrameStyle='none';
 let socialLinks=[];
 let currentLang=localStorage.getItem('eter-language')||'pl';
+const authReady=initEterAuth({
+  loginUsernameId:'loginUsername',
+  loginPasswordId:'loginPassword',
+  rememberMeId:'rememberMe',
+  loginBtnId:'loginBtn',
+  loginErrorId:'loginError',
+  loginAvatarId:'loginAvatar',
+  loginActionValueId:'loginActionValue',
+  dropdownUsernameId:'dropdownUsername',
+  profileLinkId:'profileLink',
+  onAuthStateResolved:async(authState)=>{
+    sessionUser=authState.user||null;
+    currentUsername=authState.username||null;
+  }
+});
+if(false){
 const u2e={blushyk:'blushyk@eter.gg',tengrubytyp:'tengrubytyp@eter.gg',ratatuii:'ratatuii@eter.gg',licz1:'licz1@eter.gg',mdzer:'mdzer@eter.gg',future:'future@eter.gg'};
 
 // Get username from URL
@@ -547,6 +560,7 @@ supabase.auth.onAuthStateChange(async(_,session)=>{
     await updateAuthUI(null,null,null);
   }
 });
+}
 
 async function init(){
   if(!sessionUser){
@@ -843,7 +857,7 @@ document.getElementById('languageToggle').addEventListener('click',()=>applyLang
 applyLang(currentLang);
 
 async function bootstrap(){
-  await restoreAuthSession();
+  await authReady;
   await init();
 }
 
