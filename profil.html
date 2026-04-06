@@ -229,6 +229,48 @@ body.light-theme .theme-toggle-indicator{background:linear-gradient(135deg,#fff3
 .theme-toggle-text{display:flex;flex-direction:column;align-items:flex-start;line-height:1.1;}
 .theme-toggle-label{font-size:11px;opacity:.7;}
 .theme-toggle-value{font-size:13px;}
+.login-action-avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent-soft));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0;overflow:hidden;}
+.login-action-avatar img{width:100%;height:100%;object-fit:cover;}
+.login-action-text{display:flex;flex-direction:column;align-items:flex-start;line-height:1.1;}
+.login-action-label{font-size:11px;opacity:.7;}
+.login-action-value{font-size:13px;}
+.language-toggle{min-width:72px;padding-left:16px;padding-right:16px;}
+.profile-dropdown{position:fixed;right:20px;bottom:84px;width:min(220px,calc(100vw - 28px));padding:10px;border-radius:18px;border:1px solid var(--card-border-strong);background:var(--menu-bg);backdrop-filter:blur(18px);box-shadow:0 24px 60px rgba(10,13,24,.18);opacity:0;transform:translateY(10px) scale(.96);pointer-events:none;transition:opacity .2s,transform .2s;z-index:2250;}
+.profile-dropdown.active{opacity:1;transform:translateY(0) scale(1);pointer-events:auto;}
+.profile-dropdown-name{font-size:13px;font-weight:700;padding:8px 10px 10px;color:var(--text-color);border-bottom:1px solid var(--card-border);margin-bottom:6px;}
+.profile-dropdown-name span{display:block;font-size:10px;font-weight:400;color:var(--muted-text);letter-spacing:.14em;text-transform:uppercase;margin-bottom:2px;}
+.profile-dropdown-item{display:flex;align-items:center;gap:10px;padding:10px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;color:var(--text-color);transition:background .2s;text-decoration:none;}
+.profile-dropdown-item:hover{background:rgba(255,255,255,.07);}
+.profile-dropdown-item.logout{color:var(--accent);}
+.profile-dropdown-item.logout:hover{background:rgba(255,70,85,.1);}
+.refresh-confirm{position:fixed;right:20px;bottom:84px;width:min(300px,calc(100vw - 28px));padding:16px;border-radius:20px;border:1px solid var(--card-border-strong);background:var(--menu-bg);backdrop-filter:blur(18px);box-shadow:0 24px 60px rgba(10,13,24,.18);opacity:0;transform:translateY(10px) scale(.96);pointer-events:none;transition:opacity .2s,transform .2s;z-index:2250;}
+.refresh-confirm.active{opacity:1;transform:translateY(0) scale(1);pointer-events:auto;}
+.refresh-confirm-title{margin:0 0 6px;font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted-text);}
+.refresh-confirm-text{margin:0 0 14px;font-size:14px;line-height:1.45;color:var(--text-color);}
+.refresh-confirm-actions{display:flex;justify-content:flex-end;gap:10px;}
+.refresh-confirm-btn{min-height:38px;padding:8px 14px;border-radius:999px;border:1px solid var(--card-border);background:var(--card-bg-strong);color:var(--text-color);font:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:transform .2s,background .2s,border-color .2s;}
+.refresh-confirm-btn.confirm{background:linear-gradient(135deg,var(--accent),var(--accent-soft));color:#fff;border-color:transparent;}
+.refresh-button{width:46px;padding:0;}
+.refresh-button::before{content:"↻";display:block;font-size:24px;font-weight:700;transition:transform .35s;}
+.refresh-button:hover::before{transform:rotate(180deg);}
+.modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.9);background:var(--menu-bg);border-radius:22px;padding:20px;color:var(--text-color);width:min(420px,calc(100vw - 28px));overflow:auto;transition:opacity .22s,transform .22s;z-index:3000;border:1px solid var(--card-border-strong);box-shadow:0 30px 80px rgba(10,13,24,.22);opacity:0;pointer-events:none;}
+.modal.active{transform:translate(-50%,-50%) scale(1);opacity:1;pointer-events:auto;}
+.modal-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;}
+.modal h3{text-align:left;margin:0;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted-text);}
+.modal-close{width:36px;height:36px;border:1px solid var(--card-border);border-radius:50%;background:var(--card-bg-strong);color:var(--text-color);font:inherit;font-size:22px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:transform .2s,background .2s,border-color .2s;}
+.modal-close:hover{transform:rotate(90deg);background:rgba(255,70,85,.12);border-color:rgba(255,70,85,.28);}
+.login-form{display:flex;flex-direction:column;gap:14px;padding:8px 0;}
+.login-field{display:flex;flex-direction:column;gap:6px;}
+.login-label{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted-text);}
+.login-input{padding:12px 16px;border-radius:12px;border:1px solid var(--card-border);background:var(--card-bg-strong);color:var(--text-color);font:inherit;font-size:14px;outline:none;transition:border-color .2s,box-shadow .2s;}
+.login-input:focus{border-color:rgba(255,70,85,.5);box-shadow:0 0 0 3px rgba(255,70,85,.1);}
+.login-remember{display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13px;color:var(--muted-text);user-select:none;}
+.login-remember input{width:16px;height:16px;accent-color:var(--accent);cursor:pointer;}
+.login-btn{padding:14px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent-soft));border:none;color:#fff;font:inherit;font-size:14px;font-weight:700;cursor:pointer;letter-spacing:.08em;transition:transform .2s,box-shadow .2s;}
+.login-btn:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(255,70,85,.35);}
+.login-btn:disabled{opacity:.6;cursor:not-allowed;transform:none;}
+.login-error{font-size:13px;color:var(--accent);text-align:center;min-height:20px;}
+.login-title{font-size:22px;font-weight:700;text-align:center;margin:0 0 4px;-webkit-text-fill-color:var(--text-color);}
 
 /* SAVE STATUS */
 .save-status{position:fixed;top:20px;left:50%;transform:translateX(-50%);padding:10px 20px;border-radius:999px;background:rgba(70,255,154,.15);border:1px solid rgba(70,255,154,.3);color:#46ff9a;font-size:13px;font-weight:600;opacity:0;transition:opacity .3s;z-index:5000;pointer-events:none;}
@@ -242,6 +284,7 @@ body.light-theme .theme-toggle-indicator{background:linear-gradient(135deg,#fff3
   .control-panel{left:14px;right:14px;bottom:14px;justify-content:space-between;}
   .prof-edit-panel{width:100vw;}
   .prof-stats-row{grid-template-columns:repeat(2,1fr);}
+  .refresh-confirm,.profile-dropdown{left:14px;right:14px;bottom:78px;width:auto;}
 }
 </style>
 </head>
@@ -379,31 +422,298 @@ body.light-theme .theme-toggle-indicator{background:linear-gradient(135deg,#fff3
   <button class="prof-edit-save-btn" id="editSaveBtn" onclick="saveProfile()">💾 Zapisz zmiany</button>
 </div>
 
+<div class="modal" id="loginModal">
+  <div class="modal-header"><h3>Logowanie</h3><button class="modal-close" onclick="closeLoginModal()">×</button></div>
+  <div class="login-form">
+    <div class="login-title">ETER VANGUARDS</div>
+    <div class="login-field"><label class="login-label">Login</label><input class="login-input" type="text" id="loginUsername" placeholder="Twój nick" autocomplete="username"></div>
+    <div class="login-field"><label class="login-label">Hasło</label><input class="login-input" type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password"></div>
+    <label class="login-remember"><input type="checkbox" id="rememberMe" checked><span>Zapamiętaj mnie</span></label>
+    <div class="login-error" id="loginError"></div>
+    <button class="login-btn" id="loginBtn" onclick="handleLogin()">Zaloguj się</button>
+  </div>
+</div>
+<div class="profile-dropdown" id="profileDropdown">
+  <div class="profile-dropdown-name"><span>Zalogowany jako</span><span id="dropdownUsername">—</span></div>
+  <a class="profile-dropdown-item" id="profileLink" href="profil.html">👤 Zobacz profil</a>
+  <div class="profile-dropdown-item logout" onclick="handleLogout()">🚪 Wyloguj się</div>
+</div>
+<div class="refresh-confirm" id="refreshConfirm">
+  <p class="refresh-confirm-title">Potwierdzenie</p>
+  <p class="refresh-confirm-text">Czy na pewno chcesz odświeżyć stronę?</p>
+  <div class="refresh-confirm-actions">
+    <button class="refresh-confirm-btn" onclick="hideRefreshConfirm()">Anuluj</button>
+    <button class="refresh-confirm-btn confirm" id="refreshConfirmBtn">Odśwież</button>
+  </div>
+</div>
+
 <!-- CONTROL PANEL -->
 <div class="control-panel">
+  <button class="control-action" id="loginToggle" type="button" style="padding-left:14px;padding-right:16px">
+    <span class="login-action-avatar" id="loginAvatar">?</span>
+    <span class="login-action-text"><span class="login-action-label">Konto</span><span class="login-action-value" id="loginActionValue">Zaloguj</span></span>
+  </button>
   <button class="control-action theme-toggle" id="themeToggle" type="button" style="padding-right:16px">
     <span class="theme-toggle-indicator"></span>
     <span class="theme-toggle-text"><span class="theme-toggle-label">Motyw</span><span class="theme-toggle-value" id="themeToggleValue">Ciemny</span></span>
   </button>
+  <button class="control-action language-toggle" id="languageToggle" type="button">
+    <span class="theme-toggle-text"><span class="theme-toggle-label">Język</span><span class="theme-toggle-value" id="languageToggleValue">PL</span></span>
+  </button>
+  <button class="control-action refresh-button" id="refreshButton" type="button" title="Odśwież"></button>
 </div>
 
 <script type="module">
 import{createClient}from'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 const SB_URL='https://zllishknfqylpommgnew.supabase.co';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpsbGlzaGtuZnF5bHBvbW1nbmV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzOTk4MDksImV4cCI6MjA5MDk3NTgwOX0.Tm7ZGifcT5Y2kBJxaTUK_ASQruVcpHrM9UDMtmQiT4A';
-const supabase=createClient(SB_URL,SB_KEY,{auth:{persistSession:true,storageKey:'eter-session',storage:localStorage,autoRefreshToken:true,detectSessionInUrl:false}});
+const AUTH_STORAGE_KEY='eter-session';
+const AUTH_MODE_KEY='eter-auth-mode';
+function getAuthStorageMode(){return localStorage.getItem(AUTH_MODE_KEY)==='local'?'local':'session';}
+const authStorage={
+  getItem(key){
+    const preferredStorage=getAuthStorageMode()==='local'?localStorage:sessionStorage;
+    const fallbackStorage=getAuthStorageMode()==='local'?sessionStorage:localStorage;
+    const preferredValue=preferredStorage.getItem(key);
+    if(preferredValue!==null)return preferredValue;
+    return fallbackStorage.getItem(key);
+  },
+  setItem(key,value){
+    if(getAuthStorageMode()==='local'){
+      localStorage.setItem(key,value);
+      sessionStorage.removeItem(key);
+      return;
+    }
+    sessionStorage.setItem(key,value);
+    localStorage.removeItem(key);
+  },
+  removeItem(key){
+    localStorage.removeItem(key);
+    sessionStorage.removeItem(key);
+  }
+};
+const supabase=createClient(SB_URL,SB_KEY,{auth:{persistSession:true,storageKey:AUTH_STORAGE_KEY,storage:authStorage,autoRefreshToken:true,detectSessionInUrl:false}});
 
 let viewedUsername=null;
 let viewedProfile=null;
 let sessionUser=null;
+let currentUsername=null;
 let isOwn=false;
 let pendingProfileTheme='prof-default';
 let pendingFrameStyle='none';
 let socialLinks=[];
+let currentLang=localStorage.getItem('eter-language')||'pl';
+const u2e={blushyk:'blushyk@eter.gg',tengrubytyp:'tengrubytyp@eter.gg',ratatuii:'ratatuii@eter.gg',licz1:'licz1@eter.gg',mdzer:'mdzer@eter.gg',future:'future@eter.gg'};
 
 // Get username from URL
 const params=new URLSearchParams(location.search);
 viewedUsername=params.get('user');
+
+const profileTranslations={
+  pl:{
+    back:'← Wróć',
+    editProfile:'✎ Edytuj profil',
+    about:'O mnie',
+    galleryStats:'Statystyki (galeria)',
+    photos:'Zdjęć',
+    joined:'Dołączył',
+    team:'Drużyna',
+    links:'Linki',
+    addLink:'+ Dodaj link',
+    add:'Dodaj',
+    playerGallery:'Galeria gracza',
+    noPhotos:'📷 Brak zdjęć',
+    login:'Zaloguj',
+    account:'Konto',
+    loggedAs:'Zalogowany jako',
+    viewProfile:'👤 Zobacz profil',
+    logout:'🚪 Wyloguj się',
+    confirm:'Potwierdzenie',
+    refreshQuestion:'Czy na pewno chcesz odświeżyć stronę?',
+    cancel:'Anuluj',
+    refresh:'Odśwież',
+    theme:'Motyw',
+    dark:'Ciemny',
+    light:'Jasny',
+    language:'Język',
+    loginTitle:'Logowanie',
+    remember:'Zapamiętaj mnie',
+    loginAction:'Zaloguj się',
+    unknownLogin:'Nieznany login.',
+    badCreds:'Błędne hasło lub login.',
+    editPanel:'✎ Edytuj profil',
+    displayName:'Nick wyświetlany',
+    bio:'Bio / Opis',
+    tracker:'Link do Trackera (pełny URL)',
+    profileStyle:'Styl profilu',
+    avatarFrame:'Ramka avatara',
+    saveChanges:'💾 Zapisz zmiany'
+  },
+  en:{
+    back:'← Back',
+    editProfile:'✎ Edit profile',
+    about:'About me',
+    galleryStats:'Stats (gallery)',
+    photos:'Photos',
+    joined:'Joined',
+    team:'Team',
+    links:'Links',
+    addLink:'+ Add link',
+    add:'Add',
+    playerGallery:'Player gallery',
+    noPhotos:'📷 No photos',
+    login:'Login',
+    account:'Account',
+    loggedAs:'Logged in as',
+    viewProfile:'👤 View profile',
+    logout:'🚪 Log out',
+    confirm:'Confirmation',
+    refreshQuestion:'Are you sure you want to refresh the page?',
+    cancel:'Cancel',
+    refresh:'Refresh',
+    theme:'Theme',
+    dark:'Dark',
+    light:'Light',
+    language:'Language',
+    loginTitle:'Login',
+    remember:'Remember me',
+    loginAction:'Sign in',
+    unknownLogin:'Unknown login.',
+    badCreds:'Invalid login or password.',
+    editPanel:'✎ Edit profile',
+    displayName:'Display name',
+    bio:'Bio / About',
+    tracker:'Tracker link (full URL)',
+    profileStyle:'Profile style',
+    avatarFrame:'Avatar frame',
+    saveChanges:'💾 Save changes'
+  }
+};
+
+function applyChromeLanguage(){
+  document.documentElement.lang=currentLang;
+  const t=profileTranslations[currentLang]||profileTranslations.pl;
+  document.getElementById('languageToggleValue').textContent=currentLang.toUpperCase();
+  document.querySelector('.back-btn').textContent=t.back;
+  document.getElementById('editOpenBtn').textContent=t.editProfile;
+  document.querySelectorAll('.prof-section-title')[0].textContent=t.about;
+  document.querySelectorAll('.prof-section-title')[1].textContent=t.galleryStats;
+  document.querySelectorAll('.prof-stat-label')[0].textContent=t.photos;
+  document.querySelectorAll('.prof-stat-label')[1].textContent=t.joined;
+  document.querySelectorAll('.prof-stat-label')[2].textContent=t.team;
+  document.querySelectorAll('.prof-section-title')[2].textContent=t.links;
+  document.querySelector('.prof-add-link-btn').textContent=t.addLink;
+  document.querySelector('.prof-link-save-btn').textContent=t.add;
+  document.querySelectorAll('.prof-section-title')[3].textContent=t.playerGallery;
+  document.getElementById('profGalleryEmpty').textContent=t.noPhotos;
+  document.querySelector('#loginModal .modal-header h3').textContent=t.loginTitle;
+  document.querySelector('.login-remember span').textContent=t.remember;
+  document.getElementById('loginBtn').textContent=t.loginAction;
+  document.querySelector('#profileDropdown .profile-dropdown-name span').textContent=t.loggedAs;
+  document.getElementById('profileLink').textContent=t.viewProfile;
+  document.querySelector('#profileDropdown .profile-dropdown-item.logout').textContent=t.logout;
+  document.querySelector('.refresh-confirm-title').textContent=t.confirm;
+  document.querySelector('.refresh-confirm-text').textContent=t.refreshQuestion;
+  document.querySelectorAll('.refresh-confirm-btn')[0].textContent=t.cancel;
+  document.getElementById('refreshConfirmBtn').textContent=t.refresh;
+  document.querySelector('#loginToggle .login-action-label').textContent=t.account;
+  document.querySelector('#themeToggle .theme-toggle-label').textContent=t.theme;
+  document.querySelector('#languageToggle .theme-toggle-label').textContent=t.language;
+  document.getElementById('editPanel').querySelector('h2').textContent=t.editPanel;
+  document.querySelectorAll('.prof-edit-section-label')[0].textContent=t.displayName;
+  document.querySelectorAll('.prof-edit-section-label')[1].textContent=t.bio;
+  document.querySelectorAll('.prof-edit-section-label')[2].textContent=t.tracker;
+  document.querySelectorAll('.prof-edit-section-label')[3].textContent=t.profileStyle;
+  document.querySelectorAll('.prof-edit-section-label')[4].textContent=t.avatarFrame;
+  document.getElementById('editSaveBtn').textContent=t.saveChanges;
+  document.getElementById('themeToggleValue').textContent=document.body.classList.contains('light-theme')?t.light:t.dark;
+}
+
+async function updateAuthUI(user,username,avatarUrl){
+  sessionUser=user||null;
+  currentUsername=username||null;
+  const avatar=document.getElementById('loginAvatar');
+  const label=document.getElementById('loginActionValue');
+  const dropdownName=document.getElementById('dropdownUsername');
+  const profileLink=document.getElementById('profileLink');
+
+  if(user&&username){
+    label.textContent=username;
+    dropdownName.textContent=username;
+    if(avatarUrl){
+      avatar.innerHTML=`<img src="${avatarUrl}" alt="${username}">`;
+    } else {
+      avatar.textContent=username.charAt(0).toUpperCase();
+    }
+    profileLink.href=`profil.html?user=${encodeURIComponent(username)}`;
+    return;
+  }
+
+  label.textContent=(profileTranslations[currentLang]||profileTranslations.pl).login;
+  dropdownName.textContent='—';
+  avatar.textContent='?';
+  avatar.innerHTML='?';
+  profileLink.href='profil.html';
+}
+
+window.handleLogin=async function(){
+  const username=document.getElementById('loginUsername').value.trim().toLowerCase();
+  const password=document.getElementById('loginPassword').value;
+  const remember=document.getElementById('rememberMe').checked;
+  const button=document.getElementById('loginBtn');
+  const errorBox=document.getElementById('loginError');
+  const email=u2e[username];
+  errorBox.textContent='';
+  if(!email){errorBox.textContent=(profileTranslations[currentLang]||profileTranslations.pl).unknownLogin;return;}
+  button.disabled=true;
+  button.textContent='Logowanie...';
+  localStorage.setItem(AUTH_MODE_KEY,remember?'local':'session');
+  authStorage.removeItem(AUTH_STORAGE_KEY);
+
+  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  if(error){
+    errorBox.textContent='Błędne hasło lub login.';
+    button.disabled=false;
+    button.textContent='Zaloguj się';
+    return;
+  }
+
+  button.disabled=false;
+  button.textContent='Zaloguj się';
+  closeLoginModal();
+};
+
+window.handleLogout=async function(){
+  await supabase.auth.signOut();
+  authStorage.removeItem(AUTH_STORAGE_KEY);
+  localStorage.removeItem(AUTH_MODE_KEY);
+  document.getElementById('profileDropdown').classList.remove('active');
+};
+
+async function initializeSharedAuth(){
+  let session=null;
+  const sessionResult=await supabase.auth.getSession();
+  session=sessionResult&&sessionResult.data?sessionResult.data.session:null;
+  if(!session){
+    const refreshed=await supabase.auth.refreshSession().catch(()=>null);
+    session=refreshed&&refreshed.data?refreshed.data.session:null;
+  }
+  if(session){
+    const { data: profile } = await supabase.from('profiles').select('username,avatar_url').eq('id', session.user.id).single();
+    await updateAuthUI(session.user,profile?.username||session.user.email?.split('@')[0]||session.user.email,profile?.avatar_url||null);
+  } else {
+    await updateAuthUI(null,null,null);
+  }
+}
+
+supabase.auth.onAuthStateChange(async(_,session)=>{
+  if(session){
+    const { data: profile } = await supabase.from('profiles').select('username,avatar_url').eq('id', session.user.id).single();
+    await updateAuthUI(session.user,profile?.username||session.user.email?.split('@')[0]||session.user.email,profile?.avatar_url||null);
+  } else {
+    await updateAuthUI(null,null,null);
+  }
+});
 
 async function init(){
   const{data:{session}}=await supabase.auth.getSession();
@@ -536,7 +846,7 @@ window.closeEditPanel=function(){
   document.getElementById('blur-overlay').classList.remove('active');
 };
 document.getElementById('blur-overlay').addEventListener('click',()=>{
-  closeEditPanel();closeLightbox();
+  closeEditPanel();closeLightbox();closeLoginModal();
 });
 
 window.selectTheme=function(theme,el){
@@ -635,17 +945,87 @@ window.openLightbox=function(src){document.getElementById('lightboxImg').src=src
 window.closeLightbox=function(){document.getElementById('lightbox').classList.remove('active');};
 document.getElementById('lightbox').addEventListener('click',e=>{if(e.target===document.getElementById('lightbox'))closeLightbox();});
 
+// ---- SHARED PANEL ----
+const blurOverlay=document.getElementById('blur-overlay');
+const loginModal=document.getElementById('loginModal');
+const profileDropdown=document.getElementById('profileDropdown');
+const refreshConfirm=document.getElementById('refreshConfirm');
+const loginToggle=document.getElementById('loginToggle');
+const refreshButton=document.getElementById('refreshButton');
+
+function closeAllPopups(){
+  profileDropdown.classList.remove('active');
+  refreshConfirm.classList.remove('active');
+}
+
+window.closeLoginModal=function(){
+  blurOverlay.classList.remove('active');
+  loginModal.classList.remove('active');
+  document.getElementById('loginError').textContent='';
+};
+
+window.hideRefreshConfirm=function(){
+  refreshConfirm.classList.remove('active');
+};
+
+loginToggle.addEventListener('click',e=>{
+  e.stopPropagation();
+  if(sessionUser){
+    closeAllPopups();
+    profileDropdown.classList.toggle('active');
+    return;
+  }
+  closeAllPopups();
+  blurOverlay.classList.add('active');
+  loginModal.classList.add('active');
+});
+
+refreshButton.addEventListener('click',e=>{
+  e.stopPropagation();
+  closeAllPopups();
+  refreshConfirm.classList.add('active');
+});
+
+document.getElementById('refreshConfirmBtn').addEventListener('click',()=>{
+  ['eter-theme','eter-language'].forEach(k=>localStorage.removeItem(k));
+  location.reload(true);
+});
+
+document.getElementById('loginUsername').addEventListener('keydown',e=>{
+  if(e.key==='Enter')document.getElementById('loginPassword').focus();
+});
+document.getElementById('loginPassword').addEventListener('keydown',e=>{
+  if(e.key==='Enter')handleLogin();
+});
+
+window.addEventListener('click',e=>{
+  if(!refreshConfirm.contains(e.target)&&e.target!==refreshButton)refreshConfirm.classList.remove('active');
+  if(!profileDropdown.contains(e.target)&&!loginToggle.contains(e.target))profileDropdown.classList.remove('active');
+});
+
 // ---- THEME TOGGLE (page theme, not profile theme) ----
 function applyTheme(theme){
   const light=theme==='light';
   document.body.classList.toggle('light-theme',light);
-  document.getElementById('themeToggleValue').textContent=light?'Jasny':'Ciemny';
+  const t=profileTranslations[currentLang]||profileTranslations.pl;
+  document.getElementById('themeToggleValue').textContent=light?t.light:t.dark;
   localStorage.setItem('eter-theme',light?'light':'dark');
 }
 document.getElementById('themeToggle').addEventListener('click',()=>applyTheme(document.body.classList.contains('light-theme')?'dark':'light'));
+document.getElementById('languageToggle').addEventListener('click',()=>{
+  currentLang=currentLang==='pl'?'en':'pl';
+  localStorage.setItem('eter-language',currentLang);
+  applyChromeLanguage();
+});
 applyTheme(localStorage.getItem('eter-theme')==='light'?'light':'dark');
+applyChromeLanguage();
 
-init();
+async function bootstrap(){
+  await initializeSharedAuth();
+  await init();
+}
+
+bootstrap();
 </script>
 </body>
 </html>
