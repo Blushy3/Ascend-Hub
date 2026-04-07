@@ -130,12 +130,8 @@ html{scrollbar-width:none;-ms-overflow-style:none}
 .post-author{color:var(--accent);text-decoration:none;font-weight:700}
 .post-text{font-size:13px;line-height:1.65;color:var(--text-color)}
 .post-actions{display:flex;align-items:center;gap:10px;padding-top:4px}
-.post-action{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:999px;border:1px solid var(--card-border);background:transparent;color:var(--muted-text);font:inherit;font-size:12px;font-weight:600;cursor:pointer;transition:transform .18s ease,background .18s ease,border-color .18s ease,color .18s ease,box-shadow .18s ease}
-.post-action:hover{transform:translateY(-1px);border-color:var(--accent);background:rgba(255,70,85,.08);color:var(--text-color)}
+.post-action{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:999px;border:1px solid var(--card-border);background:transparent;color:var(--muted-text);font:inherit;font-size:12px;font-weight:600}
 .post-action.shareable{cursor:pointer}
-.post-action.pop{animation:postPop .28s ease}
-.post-action.liked{color:#ff7a85;border-color:rgba(255,122,133,.55);background:rgba(255,122,133,.12)}
-@keyframes postPop{0%{transform:scale(1)}50%{transform:scale(1.08)}100%{transform:scale(1)}}
 .posts-empty{text-align:center;padding:36px 20px;color:var(--muted-text);font-size:14px;line-height:1.7}
 .posts-hidden-items{display:none}.posts-hidden-items.expanded{display:contents}
 
@@ -157,7 +153,7 @@ html{scrollbar-width:none;-ms-overflow-style:none}
 .modal h3{text-align:left;margin:0;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted-text)}
 .modal-close{width:36px;height:36px;border:1px solid var(--card-border);border-radius:50%;background:var(--card-bg-strong);color:var(--text-color);font:inherit;font-size:22px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:transform .2s,background .2s,border-color .2s}
 .modal-close:hover{transform:rotate(90deg);background:rgba(255,70,85,.12);border-color:rgba(255,70,85,.28)}
-#mapModal{width:min(700px,calc(100vw - 34px));padding:20px}
+#mapModal{width:min(760px,calc(100vw - 28px));padding:22px}
 .modal-map-img{width:100%;max-height:66vh;border-radius:18px;margin-top:8px;display:block;object-fit:contain}
 
 /* LOGIN */
@@ -860,88 +856,13 @@ function updateHistoryBtn(){
   btn.innerHTML=`${hidden.length===0?T().collapse:T().expand} <span class="expand-arrow${hidden.length===0?' rotated':''}">▼</span>`;
 }
 
-function getPostLikeKey(post){
-  return `eter-index-liked-post-${post.id||post.created_at||post.title||'post'}`;
-}
-
-function isPostEmpty(post){
-  return !String(post.title||'').trim() && !String(post.content||post.description||'').trim() && !String(post.emoji||'').trim() && !String(post.image_url||'').trim();
-}
-
-function animatePostButton(btn){
-  if(!btn)return;
-  btn.classList.remove('pop');
-  void btn.offsetWidth;
-  btn.classList.add('pop');
-}
-
-function toggleLocalLike(post,btn,labelEl){
-  const key=getPostLikeKey(post);
-  const liked=localStorage.getItem(key)==='1';
-  const next=!liked;
-  localStorage.setItem(key,next?'1':'0');
-  const likes=Number(post.likes_count||0)+(next?1:0)-(liked?1:0);
-  btn?.classList.toggle('liked',next);
-  if(labelEl)labelEl.textContent=`❤ ${Math.max(0,likes)}`;
-  animatePostButton(btn);
-}
-
-function makePostCard(post){
-  const el=document.createElement('article');
-  el.className='post-card';
-  const emoji=(post.emoji||'').trim();
-  const title=(post.title||'').trim();
-  const body=(post.content||post.description||'').trim();
-  const author=post.username||'eter';
-  const image=post.image_url?`<div class="post-media"><img src="${post.image_url}" alt="${title||'Post'}" loading="lazy"></div>`:'';
-  const emojiHtml=emoji?`<div class="post-emoji">${emoji}</div>`:'';
-  const titleHtml=title?`<div class="post-title">${title}</div>`:'';
-  const bodyHtml=body?`<div class="post-text">${body}</div>`:'';
-  const shareBtnHtml=isPostEmpty(post)?'':`<button class="post-action shareable" type="button">↗ Udostępnij</button>`;
-  el.innerHTML=`${image}<div class="post-body">${emojiHtml}${titleHtml}<div class="post-meta"><a class="post-author" href="profil.html?user=${encodeURIComponent(author)}">${author}</a><span>${fmtDate(post.created_at||new Date().toISOString())}</span></div>${bodyHtml}<div class="post-actions"><button class="post-action" type="button"><span>❤ ${Number(post.likes_count||0)}</span></button>${shareBtnHtml}</div></div>`;
-  const img=el.querySelector('img');
-  if(img)img.addEventListener('click',()=>openLightbox(post.image_url));
-  const buttons=el.querySelectorAll('.post-action');
-  const likeBtn=buttons[0];
-  const likeLabel=likeBtn?.querySelector('span');
-  if(localStorage.getItem(getPostLikeKey(post))==='1'&&likeBtn){
-    likeBtn.classList.add('liked');
-    if(likeLabel)likeLabel.textContent=`❤ ${Number(post.likes_count||0)+1}`;
-  }
-  likeBtn?.addEventListener('click',()=>toggleLocalLike(post,likeBtn,likeLabel));
-  const shareBtn=buttons.length>1?buttons[1]:null;
-  shareBtn?.addEventListener('click',async()=>{animatePostButton(shareBtn);await sharePost(post);});
-  return el;
-}
-
-async function sharePost(post){
-  if(isPostEmpty(post))return;
-  const url=`${location.origin}${location.pathname.replace(/index\.html?$/,'')}profil.html?user=${encodeURIComponent(post.username||'')}`;
-  const text=[(post.emoji||'').trim(),(post.title||'').trim(),(post.content||post.description||'').trim()].filter(Boolean).join(' ');
-  if(navigator.share){
-    try{await navigator.share({title:(post.title||'Post').trim()||'Post',text:text||undefined,url});return;}catch{}
-  }
-  try{await navigator.clipboard.writeText(`${text?`${text}\n`:''}${url}`);alert('Link do posta skopiowany.');}
-  catch{alert(url);}
-}
-
 // ---- I18N ----
 const translations={
-  pl:{infoTitle:'Info',dateLabel:'Data',timeLabel:'Godzina',matchesLabel:'Mecze',mapLabel:'Mapa',premierScore:'Premier Score',scoreInfo:'Min. 500 Premier Score, aby zakwalifikować się do playoffs',teamTitle:'Ekipa',historyTitle:'Historia',galleryTitle:'Galeria Premier',postsTitle:'Posty',expand:'Rozwiń',collapse:'Zwiń',usefulLinks:'Przydatne linki',themeLabel:'Motyw',themeDark:'Ciemny',themeLight:'Jasny',languageLabel:'Język',mapTitlePrefix:'Mapa',titleSubtitle:'Panel drużyny premierowej',reserveBadge:'Rezerwowy'},
+  pl:{infoTitle:'Info',dateLabel:'Data',timeLabel:'Godzina',matchesLabel:'Mecze',mapLabel:'Mapa',premierScore:'Premier Score',scoreInfo:'Min. 500 Premier Score aby zakwalifikować się do playoffs',teamTitle:'Ekipa',historyTitle:'Historia',galleryTitle:'Galeria Premier',postsTitle:'Posty',expand:'Rozwin',collapse:'Zwin',usefulLinks:'Przydatne linki',themeLabel:'Motyw',themeDark:'Ciemny',themeLight:'Jasny',languageLabel:'Język',mapTitlePrefix:'Mapa',titleSubtitle:'Panel drużyny premierowej',reserveBadge:'Rezerwowy'},
   en:{infoTitle:'Info',dateLabel:'Date',timeLabel:'Time',matchesLabel:'Matches',mapLabel:'Map',premierScore:'Premier Score',scoreInfo:'Minimum 500 Premier Score is required to qualify for playoffs',teamTitle:'Team',historyTitle:'History',galleryTitle:'Premier Gallery',postsTitle:'Posts',expand:'Expand',collapse:'Collapse',usefulLinks:'Useful links',themeLabel:'Theme',themeDark:'Dark',themeLight:'Light',languageLabel:'Language',mapTitlePrefix:'Map',titleSubtitle:'Premier Team Dashboard',reserveBadge:'Reserve'}
 };
 function T(){return translations[currentLang];}
-translations.pl.scoreInfo='Min. 500 Premier Score, aby zakwalifikować się do playoffs';
-translations.pl.expand='Rozwiń';
-translations.pl.collapse='Zwiń';
-translations.pl.languageLabel='Język';
-translations.pl.titleSubtitle='Panel drużyny premierowej';
 
-translations.pl.scoreInfo='Min. 500 Premier Score, aby zakwalifikować się do playoffs';
-translations.pl.expand='Rozwiń';
-translations.pl.collapse='Zwiń';
-translations.pl.languageLabel='Język';
-translations.pl.titleSubtitle='Panel drużyny premierowej';
 function applyLang(lang){
   currentLang=lang;document.documentElement.lang=lang;localStorage.setItem('eter-language',lang);
   document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.dataset.i18n;if(T()[k])el.textContent=T()[k];});
@@ -972,7 +893,7 @@ function updateQualificationState(){
   const panel=document.querySelector('.score-panel');
   if(panel)panel.classList.toggle('is-qualified',ready);
   const badge=document.getElementById('scoreReady');
-  if(badge)badge.textContent=ready?(currentLang==='pl'?'Kwalifikacja aktywna':'Playoffs Ready'):(currentLang==='pl'?'Poniżej progu':'Below Cutoff');
+  if(badge)badge.textContent=ready?'Playoffs Ready':'Below Cutoff';
 }
 
 document.getElementById('themeToggle').addEventListener('click',()=>applyTheme(document.body.classList.contains('light-theme')?'dark':'light'));
