@@ -419,12 +419,12 @@ body.light-theme .theme-toggle-indicator{background:linear-gradient(135deg,#fff3
       <div style="display:flex;flex-direction:column;gap:16px;">
         <!-- BIO -->
         <div class="prof-card">
-          <div class="prof-section-title">O mnie</div>
+          <div class="prof-section-title" id="bioSectionTitle">O mnie</div>
           <div class="prof-bio-text" id="profBio"><span class="prof-bio-empty">Brak opisu.</span></div>
         </div>
         <!-- LINKS -->
         <div class="prof-card links-card" id="profileLinksCard">
-          <div class="prof-section-title">Linki</div>
+          <div class="prof-section-title" id="linksSectionTitle">Linki</div>
           <div class="prof-links-list" id="profLinksList"></div>
           <div class="prof-edit-hint" id="profileLinksHint">Linki moĹĽesz ustawiÄ‡ w panelu edycji profilu.</div>
         </div>
@@ -434,12 +434,12 @@ body.light-theme .theme-toggle-indicator{background:linear-gradient(135deg,#fff3
       <div style="display:flex;flex-direction:column;gap:16px;">
         <!-- GALLERY -->
         <div class="prof-card">
-          <div class="prof-section-title">Galeria gracza</div>
+          <div class="prof-section-title" id="gallerySectionTitle">Galeria gracza</div>
           <div class="prof-gallery-grid" id="profGallery"></div>
           <div class="prof-gallery-empty" id="profGalleryEmpty" style="display:none">📷 Brak zdjęć</div>
         </div>
         <div class="prof-card">
-          <div class="prof-section-title">Posty gracza</div>
+          <div class="prof-section-title" id="postsSectionTitle">Posty gracza</div>
           <div class="prof-posts-grid" id="profPosts"></div>
           <div class="prof-post-empty" id="profPostsEmpty" style="display:none">Ten gracz nie ma jeszcze ĹĽadnych postĂłw.</div>
         </div>
@@ -467,43 +467,43 @@ body.light-theme .theme-toggle-indicator{background:linear-gradient(135deg,#fff3
 <!-- EDIT PANEL -->
 <div class="prof-edit-panel" id="editPanel">
   <div class="prof-edit-panel-header">
-    <h2>✏️ Edytuj profil</h2>
+    <h2 id="editPanelTitle">✏️ Edytuj profil</h2>
     <button class="prof-edit-close" onclick="closeEditPanel()">×</button>
   </div>
 
   <div class="prof-edit-section">
-    <span class="prof-edit-section-label">Nick wyświetlany</span>
+    <span class="prof-edit-section-label" id="displayNameLabel">Nick wyświetlany</span>
     <input class="prof-edit-input" type="text" id="editDisplayName" placeholder="Twój nick">
   </div>
 
   <div class="prof-edit-section">
-    <span class="prof-edit-section-label">Bio / Opis</span>
+    <span class="prof-edit-section-label" id="bioLabel">Bio / Opis</span>
     <textarea class="prof-edit-textarea" id="editBio" placeholder="Napisz coś o sobie..."></textarea>
   </div>
 
   <div class="prof-edit-section">
-    <span class="prof-edit-section-label">Tekst pod nickiem</span>
+    <span class="prof-edit-section-label" id="sublineLabel">Tekst pod nickiem</span>
     <input class="prof-edit-input" type="text" id="editSubline" placeholder="Np. Sentinel main / IGL / co tylko chcesz">
   </div>
 
   <div class="prof-edit-section">
-    <span class="prof-edit-section-label">Link do Trackera (pełny URL)</span>
+    <span class="prof-edit-section-label" id="trackerLabel">Link do Trackera (pełny URL)</span>
     <input class="prof-edit-input" type="url" id="editTrackerUrl" placeholder="https://tracker.gg/...">
   </div>
 
   <div class="prof-edit-section">
-    <span class="prof-edit-section-label">Linki pod nickiem</span>
+    <span class="prof-edit-section-label" id="topLinksLabel">Linki pod nickiem</span>
     <div class="prof-edit-grid-two">
       <input class="prof-edit-input" type="text" id="topLinkLabel1" placeholder="Etykieta 1">
       <input class="prof-edit-input" type="url" id="topLinkUrl1" placeholder="https://...">
       <input class="prof-edit-input" type="text" id="topLinkLabel2" placeholder="Etykieta 2">
       <input class="prof-edit-input" type="url" id="topLinkUrl2" placeholder="https://...">
     </div>
-    <div class="prof-edit-hint">Te dwa linki pokazujÄ… siÄ™ bezpoĹ›rednio pod nickiem. Reszta linkĂłw dalej zostaje w osobnej sekcji niĹĽej.</div>
+    <div class="prof-edit-hint" id="topLinksHint">Te dwa linki pokazujÄ… siÄ™ bezpoĹ›rednio pod nickiem. Reszta linkĂłw dalej zostaje w osobnej sekcji niĹĽej.</div>
   </div>
 
   <div class="prof-edit-section">
-    <span class="prof-edit-section-label">Dodatkowe linki</span>
+    <span class="prof-edit-section-label" id="socialLinksLabel">Dodatkowe linki</span>
     <div class="prof-edit-mini-list">
       <input class="prof-edit-input" type="text" id="socialLinkLabel1" placeholder="Etykieta 1">
       <input class="prof-edit-input" type="url" id="socialLinkUrl1" placeholder="https://...">
@@ -517,7 +517,7 @@ body.light-theme .theme-toggle-indicator{background:linear-gradient(135deg,#fff3
   </div>
 
   <div class="prof-edit-section">
-    <span class="prof-edit-section-label">Styl profilu</span>
+    <span class="prof-edit-section-label" id="profileStyleLabel">Styl profilu</span>
     <div class="theme-picker" id="themePicker">
       <div class="theme-swatch active" data-theme="prof-default" onclick="selectTheme('prof-default',this)"><div class="theme-swatch-dot" style="background:linear-gradient(135deg,#ff4655,#ff7a85)"></div>Podstawowy</div>
       <div class="theme-swatch" data-theme="prof-cyberpunk" onclick="selectTheme('prof-cyberpunk',this)"><div class="theme-swatch-dot" style="background:linear-gradient(135deg,#00fff5,#ff00aa)"></div>Cyber</div>
@@ -533,14 +533,14 @@ body.light-theme .theme-toggle-indicator{background:linear-gradient(135deg,#fff3
   </div>
 
   <div class="prof-edit-section">
-    <span class="prof-edit-section-label">Tło całego profilu</span>
+    <span class="prof-edit-section-label" id="backgroundLabel">Tło całego profilu</span>
     <input class="prof-edit-input" type="url" id="editProfileBackgroundUrl" placeholder="https://... lub zostaw puste">
     <input class="prof-edit-range" type="range" id="editBackdropStrength" min="0.08" max="0.42" step="0.01" value="0.24">
-    <div class="prof-edit-hint">SiĹ‚a tĹ‚a profilu: <span id="backdropStrengthValue">24%</span></div>
+    <div class="prof-edit-hint" id="backdropHint">SiĹ‚a ta profilu: <span id="backdropStrengthValue">24%</span></div>
   </div>
 
   <div class="prof-edit-section">
-    <span class="prof-edit-section-label">Efekt nicku</span>
+    <span class="prof-edit-section-label" id="nameEffectLabel">Efekt nicku</span>
     <div class="theme-picker" id="nameEffectPicker">
       <div class="theme-swatch active" data-namefx="none" onclick="selectNameEffect('none',this)"><div class="theme-swatch-dot" style="background:linear-gradient(135deg,#ddd,#777)"></div>Clean</div>
       <div class="theme-swatch" data-namefx="namefx-neon" onclick="selectNameEffect('namefx-neon',this)"><div class="theme-swatch-dot" style="background:linear-gradient(135deg,#fff,#ff7a85)"></div>Neon</div>
@@ -551,7 +551,7 @@ body.light-theme .theme-toggle-indicator{background:linear-gradient(135deg,#fff3
   </div>
 
   <div class="prof-edit-section">
-    <span class="prof-edit-section-label">Ramka avatara</span>
+    <span class="prof-edit-section-label" id="frameLabel">Ramka avatara</span>
     <div class="frame-picker" id="framePicker">
       <div class="frame-opt active" data-frame="none" onclick="selectFrame('none',this)"><div class="frame-preview" style="border-color:var(--muted-text)"></div>Brak</div>
       <div class="frame-opt" data-frame="frame-neon" onclick="selectFrame('frame-neon',this)"><div class="frame-preview" style="border-color:#ff4655;box-shadow:0 0 8px #ff4655"></div>Neon</div>
@@ -1117,6 +1117,7 @@ window.closeLoginModal=function(){
   document.getElementById('loginError').textContent='';
 };
 function updateAccessUI(){
+  const isPl=currentLang==='pl';
   const access=getEditAccess(viewedUsername);
   const avatar=document.getElementById('loginAvatar');
   const value=document.getElementById('loginActionValue');
@@ -1124,26 +1125,27 @@ function updateAccessUI(){
   const postTrigger=document.getElementById('postTrigger');
   const labels=document.querySelectorAll('#loginModal .login-label');
   const remember=document.querySelector('.login-remember');
-  document.querySelector('#loginModal .modal-header h3').textContent='Kod dostepu';
-  document.querySelector('#loginModal .login-title').textContent='Edycja profilu';
-  if(labels[0])labels[0].textContent='Nick';
-  if(labels[1])labels[1].textContent='Kod';
+  document.querySelector('#loginModal .modal-header h3').textContent=isPl?'Kod dost\u0119pu':'Access code';
+  document.querySelector('#loginModal .login-title').textContent=isPl?'Edycja profilu':'Profile editing';
+  if(labels[0])labels[0].textContent=isPl?'Nick':'Nickname';
+  if(labels[1])labels[1].textContent=isPl?'Kod':'Code';
   if(remember)remember.style.display='none';
-  document.querySelector('.login-action-label').textContent='Dostep';
-  document.querySelector('#profileDropdown .profile-dropdown-name span').textContent='Odblokowano dla';
-  document.querySelector('#profileDropdown .logout').textContent='Wyczysc dostep';
-  document.getElementById('loginBtn').textContent='Odblokuj';
+  document.querySelector('.login-action-label').textContent=isPl?'Dost\u0119p':'Access';
+  document.querySelector('#profileDropdown .profile-dropdown-name span').textContent=isPl?'Odblokowano dla':'Unlocked for';
+  document.querySelector('#profileDropdown .logout').textContent=isPl?'Wyczy\u015b\u0107 dost\u0119p':'Clear access';
+  document.getElementById('loginBtn').textContent=isPl?'Odblokuj':'Unlock';
   if(access?.username){
     value.textContent=access.username;
     dropdown.textContent=access.username;
     avatar.textContent=access.username.charAt(0).toUpperCase();
     if(postTrigger)postTrigger.classList.add('visible');
   }else{
-    value.textContent='Kod';
-    dropdown.textContent='brak';
+    value.textContent=isPl?'Kod':'Code';
+    dropdown.textContent=isPl?'brak':'none';
     avatar.textContent='#';
     if(postTrigger)postTrigger.classList.remove('visible');
   }
+  repairStaticText();
 }
 function openCodeModal(prefill=''){
   closeAllPopups();
@@ -1327,28 +1329,133 @@ function ensureCustomizationOptions(){
 function repairStaticText(){
   const setText=(selector,value)=>{const el=document.querySelector(selector);if(el)el.textContent=value;};
   const setPlaceholder=(selector,value)=>{const el=document.querySelector(selector);if(el)el.placeholder=value;};
+  const setHTML=(selector,value)=>{const el=document.querySelector(selector);if(el)el.innerHTML=value;};
   const isPl=currentLang==='pl';
-  const profileHint=[...document.querySelectorAll('.prof-edit-hint')][0];
-  const backdropHint=[...document.querySelectorAll('.prof-edit-hint')][1];
-  if(profileHint)profileHint.textContent=isPl?'Te dwa linki pokazuj\u0105 si\u0119 bezpo\u015brednio pod nickiem. Reszta link\u00f3w zostaje ni\u017cej, w osobnej sekcji.':'These two links show directly under the nickname. The rest stay below in the links section.';
-  if(backdropHint)backdropHint.innerHTML=`${isPl?'Si\u0142a t\u0142a profilu':'Profile background strength'}: <span id="backdropStrengthValue">${Math.round(pendingBackdropStrength*100)}%</span>`;
+  const loginLabels=[...document.querySelectorAll('#loginModal .login-label')];
+  const postLabels=[...document.querySelectorAll('#postModal .login-label')];
+  const refreshButtons=[...document.querySelectorAll('.refresh-confirm-btn')];
+  const currentPercent=Math.round((Number(document.getElementById('editBackdropStrength')?.value||pendingBackdropStrength)||0)*100);
+
+  setText('#bioSectionTitle',isPl?'O mnie':'About');
+  setText('#linksSectionTitle',isPl?'Linki':'Links');
+  setText('#gallerySectionTitle',isPl?'Galeria gracza':'Player gallery');
+  setText('#postsSectionTitle',isPl?'Posty gracza':'Player posts');
+  setText('#editPanelTitle',isPl?'\u270f\ufe0f Edytuj profil':'\u270f\ufe0f Edit profile');
+  setText('#displayNameLabel',isPl?'Nick wy\u015bwietlany':'Displayed nickname');
+  setText('#bioLabel',isPl?'Bio / Opis':'Bio / Description');
+  setText('#sublineLabel',isPl?'Tekst pod nickiem':'Text under nickname');
+  setText('#trackerLabel',isPl?'Link do Trackera (pe\u0142ny URL)':'Tracker link (full URL)');
+  setText('#topLinksLabel',isPl?'Linki pod nickiem':'Links under nickname');
+  setText('#socialLinksLabel',isPl?'Dodatkowe linki':'Extra links');
+  setText('#profileStyleLabel',isPl?'Styl profilu':'Profile style');
+  setText('#backgroundLabel',isPl?'T\u0142o ca\u0142ego profilu':'Full profile background');
+  setText('#nameEffectLabel',isPl?'Efekt nicku':'Nickname effect');
+  setText('#frameLabel',isPl?'Ramka avatara':'Avatar frame');
+  setText('#profileLinksHint',isPl?'Linki mo\u017cesz ustawi\u0107 w panelu edycji profilu.':'You can configure links in the profile edit panel.');
+  setText('#topLinksHint',isPl?'Te dwa linki pokazuj\u0105 si\u0119 bezpo\u015brednio pod nickiem. Reszta link\u00f3w zostaje ni\u017cej, w osobnej sekcji.':'These two links appear directly under the nickname. The rest stay below in a separate section.');
+  setHTML('#backdropHint',`${isPl?'Si\u0142a t\u0142a profilu':'Profile background strength'}: <span id="backdropStrengthValue">${currentPercent}%</span>`);
+
   const currentName=document.getElementById('profName')?.textContent?.trim();
   document.title=currentName?`${currentName} - ETER VANGUARDS`:(isPl?'Profil - ETER VANGUARDS':'Profile - ETER VANGUARDS');
+  setText('.back-btn',isPl?'\u2190 Wr\u00f3\u0107':'\u2190 Back');
+  setText('#editOpenBtn',isPl?'\u270f\ufe0f Edytuj profil':'\u270f\ufe0f Edit profile');
+  setText('#bannerEditBtn',isPl?'\ud83d\udcf7 Zmie\u0144 banner':'\ud83d\udcf7 Change banner');
   setText('#postTrigger',isPl?'\u2726 Nowy post':'\u2726 New post');
   setText('#profileLink',isPl?'\ud83d\udc64 Zobacz profil':'\ud83d\udc64 View profile');
+  setText('.profile-dropdown-name span',isPl?'Zalogowany jako':'Unlocked for');
   setText('.profile-dropdown-item.logout',isPl?'\ud83d\udeaa Wyloguj si\u0119':'\ud83d\udeaa Log out');
   setText('.refresh-confirm-title',isPl?'Potwierdzenie':'Confirmation');
   setText('.refresh-confirm-text',isPl?'Czy na pewno chcesz od\u015bwie\u017cy\u0107 stron\u0119?':'Are you sure you want to refresh the page?');
   setText('#refreshConfirmBtn',isPl?'Od\u015bwie\u017c':'Refresh');
+  if(refreshButtons[0])refreshButtons[0].textContent=isPl?'Anuluj':'Cancel';
   setText('#loginBtn',isPl?'Zaloguj si\u0119':'Sign in');
   setText('#editSaveBtn',isPl?'\ud83d\udcbe Zapisz zmiany':'\ud83d\udcbe Save changes');
+  setText('.login-title','ETER VANGUARDS');
   setText('.theme-toggle-label',isPl?'J\u0119zyk':'Language');
-  setText('.login-label[for="postTitle"]',isPl?'Tytu\u0142':'Title');
+  setText('.login-action-label',isPl?'Konto':'Account');
+  setText('#profGalleryEmpty',isPl?'\ud83d\udcf7 Brak zdj\u0119\u0107':'\ud83d\udcf7 No photos yet');
+  setText('#profPostsEmpty',isPl?'Ten gracz nie ma jeszcze \u017cadnych post\u00f3w.':'This player has no posts yet.');
+  if(loginLabels[0])loginLabels[0].textContent=isPl?'Login':'Login';
+  if(loginLabels[1])loginLabels[1].textContent=isPl?'Has\u0142o':'Password';
+  if(postLabels[0])postLabels[0].textContent=isPl?'Tytu\u0142':'Title';
+  if(postLabels[1])postLabels[1].textContent=isPl?'Emoji':'Emoji';
+  if(postLabels[2])postLabels[2].textContent=isPl?'Opis':'Description';
+  if(postLabels[3])postLabels[3].textContent=isPl?'Zdj\u0119cie':'Image';
+  setText('#postModal .modal-header h3',isPl?'Nowy post':'New post');
+  setText('#loginModal .modal-header h3',isPl?'Logowanie':'Login');
   setPlaceholder('#loginUsername',isPl?'Tw\u00f3j nick':'Your nickname');
   setPlaceholder('#loginPassword','\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022');
   setPlaceholder('#postEmoji','\ud83d\udd25');
+  setPlaceholder('#postTitle',isPl?'Np. Win streak':'e.g. Win streak');
   setPlaceholder('#postContent',isPl?'Napisz co\u015b o po\u015bcie...':'Write something about the post...');
+  setPlaceholder('#editDisplayName',isPl?'Tw\u00f3j nick':'Your nickname');
+  setPlaceholder('#editBio',isPl?'Napisz co\u015b o sobie...':'Write something about yourself...');
+  setPlaceholder('#editSubline',isPl?'Np. Sentinel main / IGL / co tylko chcesz':'e.g. Sentinel main / IGL / whatever you want');
+  setPlaceholder('#editTrackerUrl','https://tracker.gg/...');
   setPlaceholder('#editProfileBackgroundUrl',isPl?'https://... lub zostaw puste':'https://... or leave empty');
+  setPlaceholder('#topLinkLabel1',isPl?'Etykieta 1':'Label 1');
+  setPlaceholder('#topLinkLabel2',isPl?'Etykieta 2':'Label 2');
+  setPlaceholder('#socialLinkLabel1',isPl?'Etykieta 1':'Label 1');
+  setPlaceholder('#socialLinkLabel2',isPl?'Etykieta 2':'Label 2');
+  setPlaceholder('#socialLinkLabel3',isPl?'Etykieta 3':'Label 3');
+  setPlaceholder('#socialLinkLabel4',isPl?'Etykieta 4':'Label 4');
+  setPlaceholder('#socialLinkLabel5',isPl?'Etykieta 5':'Label 5');
+  setPlaceholder('#socialLinkLabel6',isPl?'Etykieta 6':'Label 6');
+  const themeNames={
+    'prof-default':isPl?'Podstawowy':'Default',
+    'prof-cyberpunk':'Cyber',
+    'prof-arcane':'Arcane',
+    'prof-valorant':'Valo',
+    'prof-glass':'Glass',
+    'prof-midnight':'Night',
+    'prof-sunset':'Sunset',
+    'prof-forest':'Forest',
+    'prof-royal':'Royal',
+    'prof-crimson':'Crimson',
+    'prof-aurora':'Aurora',
+    'prof-obsidian':'Obsidian',
+    'prof-sakura':'Sakura'
+  };
+  const effectNames={
+    none:isPl?'Czysty':'Clean',
+    'namefx-neon':'Neon',
+    'namefx-gradient':'Glow',
+    'namefx-glitch':'Glitch',
+    'namefx-float':'Float',
+    'namefx-shimmer':'Shimmer',
+    'namefx-outline':'Outline',
+    'namefx-royal':'Royal',
+    'namefx-chrome':'Chrome',
+    'namefx-ember':'Ember',
+    'namefx-aurora':'Aurora'
+  };
+  const frameNames={
+    none:isPl?'Brak':'None',
+    'frame-neon':'Neon',
+    'frame-fire':'Fire',
+    'frame-rainbow':isPl?'Tęcza':'Rainbow',
+    'frame-gold':'Gold',
+    'frame-ice':'Ice',
+    'frame-arcane':'Arcane',
+    'frame-crown':'Crown',
+    'frame-toxic':'Toxic',
+    'frame-cosmic':'Cosmic',
+    'frame-ember':'Ember',
+    'frame-vortex':'Vortex',
+    'frame-matrix':'Matrix',
+    'frame-starlight':isPl?'Gwiazdy':'Star',
+    'frame-butterfly':isPl?'Motyl':'Butterfly',
+    'frame-shards':'Shards',
+    'frame-royalvine':'Vine',
+    'frame-halo':'Halo',
+    'frame-prism':'Prism',
+    'frame-eclipse':'Eclipse',
+    'frame-aether':'Aether',
+    'frame-petal':'Petal'
+  };
+  document.querySelectorAll('[data-theme]').forEach(el=>{if(themeNames[el.dataset.theme])el.lastChild.textContent=themeNames[el.dataset.theme];});
+  document.querySelectorAll('[data-namefx]').forEach(el=>{if(effectNames[el.dataset.namefx])el.lastChild.textContent=effectNames[el.dataset.namefx];});
+  document.querySelectorAll('[data-frame]').forEach(el=>{if(frameNames[el.dataset.frame])el.lastChild.textContent=frameNames[el.dataset.frame];});
 }
 
 applyProfileTheme=function(theme){
