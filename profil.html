@@ -237,21 +237,17 @@ body.prof-valorant .prof-name,body.prof-valorant .prof-section-title{font-family
 .prof-post-title:empty,.prof-post-text:empty{display:none}
 .prof-showcase-panel{position:relative;min-height:220px;border-radius:18px;overflow:hidden;border:1px solid var(--prof-card-border);background:linear-gradient(135deg,rgba(255,255,255,.06),rgba(255,255,255,.02));display:none}
 .prof-showcase-panel.visible{display:block}
-.prof-showcase-media{position:absolute;inset:0;background:center/cover no-repeat;filter:saturate(1.04)}
+.prof-showcase-media{position:absolute;inset:0;background:center/contain no-repeat;filter:saturate(1.04)}
+.prof-showcase-panel.fill-panel .prof-showcase-media{background-size:cover}
 .prof-showcase-panel::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,8,18,.08),rgba(6,8,18,.72))}
-.prof-showcase-copy{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:flex-end;min-height:220px;padding:18px}
-.prof-showcase-kicker{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.72)}
-.prof-showcase-title{font-size:22px;font-weight:700;margin-top:8px}
-.prof-showcase-text{font-size:13px;line-height:1.6;color:rgba(255,255,255,.82);max-width:420px;margin-top:6px}
 .prof-showcase-empty{font-size:13px;color:var(--muted-text);text-align:center;padding:28px 20px}
-.shape-round .prof-card,.shape-round .prof-post-card,.shape-round .prof-head-link,.shape-round .prof-link-item a{border-radius:20px}
-.shape-void .prof-card,.shape-void .prof-post-card,.shape-void .prof-head-link,.shape-void .prof-link-item a{border-radius:30px 8px 30px 8px}
-.shape-icy .prof-card,.shape-icy .prof-post-card,.shape-icy .prof-head-link,.shape-icy .prof-link-item a{border-radius:26px 26px 10px 26px}
-.shape-shard .prof-card,.shape-shard .prof-post-card,.shape-shard .prof-head-link,.shape-shard .prof-link-item a{border-radius:10px;clip-path:polygon(0 0,93% 0,100% 18%,100% 100%,7% 100%,0 82%)}
 .skin-void .prof-post-card{background:linear-gradient(135deg,rgba(20,16,38,.96),rgba(48,18,70,.72));border-color:rgba(178,120,255,.3);box-shadow:0 18px 38px rgba(90,30,120,.22)}
 .skin-icy .prof-post-card{background:linear-gradient(135deg,rgba(10,26,42,.94),rgba(24,58,80,.8));border-color:rgba(130,214,255,.28);box-shadow:0 18px 38px rgba(70,170,255,.16)}
 .skin-ember .prof-post-card{background:linear-gradient(135deg,rgba(40,16,12,.96),rgba(84,30,22,.84));border-color:rgba(255,158,108,.3);box-shadow:0 18px 38px rgba(255,120,70,.16)}
 .skin-celestial .prof-post-card{background:linear-gradient(135deg,rgba(16,22,54,.95),rgba(40,30,78,.82));border-color:rgba(185,189,255,.28);box-shadow:0 18px 38px rgba(124,142,255,.18)}
+.skin-obsidian .prof-post-card{background:linear-gradient(135deg,rgba(10,12,18,.96),rgba(28,32,44,.82));border-color:rgba(182,192,214,.22);box-shadow:0 18px 38px rgba(20,24,38,.28)}
+.skin-nebula .prof-post-card{background:linear-gradient(135deg,rgba(30,14,54,.96),rgba(22,44,74,.82));border-color:rgba(155,138,255,.28);box-shadow:0 18px 38px rgba(96,76,188,.22)}
+.skin-toxic .prof-post-card{background:linear-gradient(135deg,rgba(16,34,18,.96),rgba(28,58,26,.84));border-color:rgba(135,255,116,.24);box-shadow:0 18px 38px rgba(68,162,58,.2)}
 .prof-post-card.is-premier{border-color:rgba(255,214,102,.85)!important;box-shadow:0 18px 36px rgba(255,196,72,.22),0 0 0 1px rgba(255,226,138,.26) inset}
 .premier-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;background:linear-gradient(135deg,#fff1a8,#ffcc58);color:#4a3400;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;align-self:flex-start}
 .prof-post-meta.has-badge{align-items:flex-start;flex-direction:column}
@@ -260,18 +256,25 @@ body.prof-valorant .prof-name,body.prof-valorant .prof-section-title{font-family
 .banner-overlay-stars{background-image:radial-gradient(circle at 20% 30%,rgba(255,255,255,.8) 0 1px,transparent 1.5px),radial-gradient(circle at 70% 40%,rgba(185,223,255,.9) 0 1px,transparent 1.8px),radial-gradient(circle at 45% 70%,rgba(255,231,179,.8) 0 1px,transparent 1.6px);background-size:180px 180px;animation:overlayDrift 10s linear infinite}
 .banner-overlay-aurora{background:linear-gradient(120deg,rgba(124,246,214,.24),rgba(124,199,255,.18),rgba(190,154,255,.22));filter:blur(18px);animation:overlayPulse 5s ease-in-out infinite}
 .banner-overlay-grid{background-image:linear-gradient(rgba(124,199,255,.14) 1px,transparent 1px),linear-gradient(90deg,rgba(124,199,255,.14) 1px,transparent 1px);background-size:34px 34px;animation:overlayDrift 9s linear infinite}
-.name-particles{position:absolute;inset:-14px -8px auto auto;pointer-events:none;display:none}
+.banner-overlay-fireflies{background-image:radial-gradient(circle at 18% 28%,rgba(255,214,128,.95) 0 2px,transparent 2.6px),radial-gradient(circle at 66% 44%,rgba(255,175,92,.9) 0 2px,transparent 2.4px),radial-gradient(circle at 82% 24%,rgba(255,230,154,.85) 0 1.6px,transparent 2.1px);background-size:220px 220px;animation:overlayDrift 8s linear infinite}
+.banner-overlay-rain{background-image:linear-gradient(180deg,rgba(175,220,255,.35),transparent 78%);background-size:3px 26px;animation:rainSlide 1.2s linear infinite}
+.banner-overlay-sparks{background-image:radial-gradient(circle at 20% 20%,rgba(255,194,120,.9) 0 1.5px,transparent 2px),radial-gradient(circle at 50% 60%,rgba(255,110,92,.82) 0 1.4px,transparent 2px),radial-gradient(circle at 84% 34%,rgba(255,241,168,.9) 0 1.2px,transparent 1.8px);background-size:120px 120px;animation:overlayPulse 2.6s ease-in-out infinite}
+.name-particles{position:absolute;top:50%;left:100%;width:110px;height:42px;transform:translate(8px,-50%);pointer-events:none;display:none}
 .name-particles.visible{display:block}
 .name-particles span{position:absolute;width:6px;height:6px;border-radius:50%;background:#fff;opacity:.75;animation:particleFloat 3.2s ease-in-out infinite}
-.name-particles span:nth-child(1){top:8px;right:16px;animation-delay:0s}
-.name-particles span:nth-child(2){top:22px;right:52px;animation-delay:.6s}
-.name-particles span:nth-child(3){top:2px;right:84px;animation-delay:1.2s}
+.name-particles span:nth-child(1){top:5px;left:8px;animation-delay:0s}
+.name-particles span:nth-child(2){top:21px;left:34px;animation-delay:.6s}
+.name-particles span:nth-child(3){top:10px;left:62px;animation-delay:1.2s}
 .name-particles.particles-ember span{background:#ffbd7a;box-shadow:0 0 12px rgba(255,189,122,.6)}
 .name-particles.particles-cosmic span{background:#cbb7ff;box-shadow:0 0 12px rgba(203,183,255,.6)}
 .name-particles.particles-frost span{background:#b7f0ff;box-shadow:0 0 12px rgba(183,240,255,.6)}
+.name-particles.particles-neon span{background:#7df8ff;box-shadow:0 0 12px rgba(125,248,255,.7)}
+.name-particles.particles-gold span{background:#ffe08c;box-shadow:0 0 12px rgba(255,224,140,.72)}
+.name-particles.particles-rose span{background:#ffb2d9;box-shadow:0 0 12px rgba(255,178,217,.72)}
 @keyframes overlayDrift{0%{transform:translate3d(0,0,0)}50%{transform:translate3d(-12px,8px,0)}100%{transform:translate3d(0,0,0)}}
 @keyframes overlayPulse{0%,100%{opacity:.32}50%{opacity:.62}}
 @keyframes particleFloat{0%,100%{transform:translateY(0) scale(.9);opacity:.25}50%{transform:translateY(-10px) scale(1.2);opacity:1}}
+@keyframes rainSlide{0%{background-position:0 0}100%{background-position:0 26px}}
 .prof-post-empty{font-size:13px;color:var(--muted-text);text-align:center;padding:32px 20px;min-height:108px;display:flex;align-items:center;justify-content:center}
 .social-launch-card,.friends-panel{display:none!important}
 
@@ -675,10 +678,10 @@ let topLinks=[];
 let pendingNameEffect='none';
 let pendingBackdropStrength=0.24;
 let pendingPostSkin='skin-default';
-let pendingShapeStyle='shape-round';
 let pendingBannerOverlay='overlay-none';
 let pendingNameParticles='particles-none';
 let pendingShowcaseUrl='';
+let pendingShowcaseFill=false;
 let currentLang=localStorage.getItem('eter-language')||'pl';
 const params=new URLSearchParams(location.search);
 viewedUsername=params.get('user');
@@ -1006,12 +1009,6 @@ window.selectPostSkin=function(skin,el){
   document.querySelectorAll('[data-postskin]').forEach(item=>item.classList.remove('active'));
   el.classList.add('active');
   pendingPostSkin=skin;
-  applyProfileExtras();
-};
-window.selectShapeStyle=function(shape,el){
-  document.querySelectorAll('[data-shape]').forEach(item=>item.classList.remove('active'));
-  el.classList.add('active');
-  pendingShapeStyle=shape;
   applyProfileExtras();
 };
 window.selectBannerOverlay=function(overlay,el){
@@ -1357,7 +1354,7 @@ const PROFILE_CFG_PREFIX='__cfg__';
 const PREMIER_MARKER='[[PREMIER]]';
 function cfgEntry(key,value){return {label:`${PROFILE_CFG_PREFIX}${key}`,url:value};}
 function parseProfileConfig(rawLinks=[]){
-  const config={post_skin:'skin-default',shape_style:'shape-round',banner_overlay:'overlay-none',name_particles:'particles-none',showcase_url:''};
+  const config={post_skin:'skin-default',banner_overlay:'overlay-none',name_particles:'particles-none',showcase_url:'',showcase_fill:'0'};
   const visible=[];
   (Array.isArray(rawLinks)?rawLinks:[]).forEach(item=>{
     const label=String(item?.label||'');
@@ -1374,10 +1371,10 @@ function buildSocialLinksPayload(visibleLinks){
   return [
     ...visibleLinks,
     cfgEntry('post_skin',pendingPostSkin),
-    cfgEntry('shape_style',pendingShapeStyle),
     cfgEntry('banner_overlay',pendingBannerOverlay),
     cfgEntry('name_particles',pendingNameParticles),
-    cfgEntry('showcase_url',pendingShowcaseUrl||'')
+    cfgEntry('showcase_url',pendingShowcaseUrl||''),
+    cfgEntry('showcase_fill',pendingShowcaseFill?'1':'0')
   ];
 }
 function sanitizePostContent(content=''){
@@ -1387,8 +1384,7 @@ function isPremierPost(post){
   return String(post?.content||post?.description||'').includes(PREMIER_MARKER);
 }
 function applyProfileExtras(){
-  document.body.classList.remove('shape-round','shape-void','shape-icy','shape-shard','skin-default','skin-void','skin-icy','skin-ember','skin-celestial');
-  document.body.classList.add(pendingShapeStyle||'shape-round');
+  document.body.classList.remove('skin-default','skin-void','skin-icy','skin-ember','skin-celestial','skin-obsidian','skin-nebula','skin-toxic');
   if(pendingPostSkin&&pendingPostSkin!=='skin-default')document.body.classList.add(pendingPostSkin);
   const bannerWrap=document.getElementById('bannerWrap');
   if(bannerWrap){
@@ -1434,7 +1430,8 @@ function renderShowcase(){
   }
   empty.style.display='none';
   host.classList.add('visible');
-  host.innerHTML=`<div class="prof-showcase-media" style="background-image:url('${pendingShowcaseUrl.replace(/'/g,"%27")}')"></div><div class="prof-showcase-copy"><div class="prof-showcase-kicker">${currentLang==='pl'?'Showcase':'Showcase'}</div><div class="prof-showcase-title">${currentLang==='pl'?'Wyróżniony panel':'Featured panel'}</div><div class="prof-showcase-text">${currentLang==='pl'?'To miejsce zastępuje dawną galerię i pokazuje jeden wybrany motyw, GIF albo grafikę.':'This panel replaces the old gallery and shows one selected visual, GIF, or image.'}</div></div>`;
+  host.classList.toggle('fill-panel',Boolean(pendingShowcaseFill));
+  host.innerHTML=`<div class="prof-showcase-media" style="background-image:url('${pendingShowcaseUrl.replace(/'/g,"%27")}')"></div>`;
 }
 
 function ensureCustomizationOptions(){
@@ -1486,6 +1483,10 @@ function ensureCustomizationOptions(){
       <div class="prof-edit-section" id="advancedVisualSection">
         <span class="prof-edit-section-label" id="showcaseLabel">Showcase panel</span>
         <input class="prof-edit-input" type="url" id="editShowcaseUrl" placeholder="https://... GIF / obraz">
+        <label class="login-remember" id="showcaseFillWrap" style="margin:2px 0 10px;">
+          <input type="checkbox" id="editShowcaseFill">
+          <span id="showcaseFillLabel">Wypełnij panel</span>
+        </label>
         <span class="prof-edit-section-label" id="postSkinLabel">Skórka postów</span>
         <div class="theme-picker" id="postSkinPicker">
           <div class="theme-swatch active" data-postskin="skin-default" onclick="selectPostSkin('skin-default',this)"><div class="theme-swatch-dot" style="background:linear-gradient(135deg,#ddd,#777)"></div>Default</div>
@@ -1493,13 +1494,9 @@ function ensureCustomizationOptions(){
           <div class="theme-swatch" data-postskin="skin-icy" onclick="selectPostSkin('skin-icy',this)"><div class="theme-swatch-dot" style="background:linear-gradient(135deg,#96ebff,#6da9ff)"></div>Icy</div>
           <div class="theme-swatch" data-postskin="skin-ember" onclick="selectPostSkin('skin-ember',this)"><div class="theme-swatch-dot" style="background:linear-gradient(135deg,#ffb06b,#ff6f61)"></div>Ember</div>
           <div class="theme-swatch" data-postskin="skin-celestial" onclick="selectPostSkin('skin-celestial',this)"><div class="theme-swatch-dot" style="background:linear-gradient(135deg,#d8dbff,#8ca1ff)"></div>Celestial</div>
-        </div>
-        <span class="prof-edit-section-label" id="shapeStyleLabel">Kształt elementów</span>
-        <div class="theme-picker" id="shapePicker">
-          <div class="theme-swatch active" data-shape="shape-round" onclick="selectShapeStyle('shape-round',this)"><div class="theme-swatch-dot" style="background:linear-gradient(135deg,#ddd,#999)"></div>Round</div>
-          <div class="theme-swatch" data-shape="shape-void" onclick="selectShapeStyle('shape-void',this)"><div class="theme-swatch-dot" style="background:linear-gradient(135deg,#c6abff,#7b54ff)"></div>Void</div>
-          <div class="theme-swatch" data-shape="shape-icy" onclick="selectShapeStyle('shape-icy',this)"><div class="theme-swatch-dot" style="background:linear-gradient(135deg,#b6f5ff,#78caff)"></div>Icy</div>
-          <div class="theme-swatch" data-shape="shape-shard" onclick="selectShapeStyle('shape-shard',this)"><div class="theme-swatch-dot" style="background:linear-gradient(135deg,#7dd0ff,#c993ff)"></div>Shard</div>
+          <div class="theme-swatch" data-postskin="skin-obsidian" onclick="selectPostSkin('skin-obsidian',this)"><div class="theme-swatch-dot" style="background:linear-gradient(135deg,#1b2230,#68748a)"></div>Obsidian</div>
+          <div class="theme-swatch" data-postskin="skin-nebula" onclick="selectPostSkin('skin-nebula',this)"><div class="theme-swatch-dot" style="background:linear-gradient(135deg,#824dff,#4c8dff)"></div>Nebula</div>
+          <div class="theme-swatch" data-postskin="skin-toxic" onclick="selectPostSkin('skin-toxic',this)"><div class="theme-swatch-dot" style="background:linear-gradient(135deg,#b5ff76,#32a852)"></div>Toxic</div>
         </div>
         <span class="prof-edit-section-label" id="bannerOverlayLabel">Nakładka bannera</span>
         <div class="theme-picker" id="bannerOverlayPicker">
@@ -1507,6 +1504,9 @@ function ensureCustomizationOptions(){
           <div class="theme-swatch" data-overlay="overlay-stars" onclick="selectBannerOverlay('overlay-stars',this)"><div class="theme-swatch-dot" style="background:linear-gradient(135deg,#fff,#b7d9ff)"></div>Stars</div>
           <div class="theme-swatch" data-overlay="overlay-aurora" onclick="selectBannerOverlay('overlay-aurora',this)"><div class="theme-swatch-dot" style="background:linear-gradient(135deg,#7cf6d6,#b8a4ff)"></div>Aurora</div>
           <div class="theme-swatch" data-overlay="overlay-grid" onclick="selectBannerOverlay('overlay-grid',this)"><div class="theme-swatch-dot" style="background:linear-gradient(135deg,#7cc7ff,#1d3c78)"></div>Grid</div>
+          <div class="theme-swatch" data-overlay="overlay-fireflies" onclick="selectBannerOverlay('overlay-fireflies',this)"><div class="theme-swatch-dot" style="background:linear-gradient(135deg,#ffe18a,#ffb05c)"></div>Fireflies</div>
+          <div class="theme-swatch" data-overlay="overlay-rain" onclick="selectBannerOverlay('overlay-rain',this)"><div class="theme-swatch-dot" style="background:linear-gradient(135deg,#a6d7ff,#5177d8)"></div>Rain</div>
+          <div class="theme-swatch" data-overlay="overlay-sparks" onclick="selectBannerOverlay('overlay-sparks',this)"><div class="theme-swatch-dot" style="background:linear-gradient(135deg,#ffd56f,#ff7c61)"></div>Sparks</div>
         </div>
         <span class="prof-edit-section-label" id="particlesLabel">Particles przy nicku</span>
         <div class="theme-picker" id="particlesPicker">
@@ -1514,6 +1514,9 @@ function ensureCustomizationOptions(){
           <div class="theme-swatch" data-particles="particles-ember" onclick="selectNameParticles('particles-ember',this)"><div class="theme-swatch-dot" style="background:linear-gradient(135deg,#ffd089,#ff7d61)"></div>Ember</div>
           <div class="theme-swatch" data-particles="particles-cosmic" onclick="selectNameParticles('particles-cosmic',this)"><div class="theme-swatch-dot" style="background:linear-gradient(135deg,#d3c5ff,#8ca1ff)"></div>Cosmic</div>
           <div class="theme-swatch" data-particles="particles-frost" onclick="selectNameParticles('particles-frost',this)"><div class="theme-swatch-dot" style="background:linear-gradient(135deg,#d2fbff,#8fdcff)"></div>Frost</div>
+          <div class="theme-swatch" data-particles="particles-neon" onclick="selectNameParticles('particles-neon',this)"><div class="theme-swatch-dot" style="background:linear-gradient(135deg,#7df8ff,#36d7ff)"></div>Neon</div>
+          <div class="theme-swatch" data-particles="particles-gold" onclick="selectNameParticles('particles-gold',this)"><div class="theme-swatch-dot" style="background:linear-gradient(135deg,#fff0a6,#ffd15e)"></div>Gold</div>
+          <div class="theme-swatch" data-particles="particles-rose" onclick="selectNameParticles('particles-rose',this)"><div class="theme-swatch-dot" style="background:linear-gradient(135deg,#ffc6e3,#ff8cc3)"></div>Rose</div>
         </div>
       </div>
     `);
@@ -1555,8 +1558,8 @@ function repairStaticText(){
   setText('#profileStyleLabel',isPl?'Styl profilu':'Profile style');
   setText('#backgroundLabel',isPl?'T\u0142o ca\u0142ego profilu':'Full profile background');
   setText('#showcaseLabel',isPl?'Showcase panel':'Showcase panel');
+  setText('#showcaseFillLabel',isPl?'Wypełnij panel':'Fill panel');
   setText('#postSkinLabel',isPl?'Sk\u00f3rka post\u00f3w':'Post card skin');
-  setText('#shapeStyleLabel',isPl?'Kszta\u0142t element\u00f3w':'Element shape');
   setText('#bannerOverlayLabel',isPl?'Nak\u0142adka bannera':'Banner overlay');
   setText('#particlesLabel',isPl?'Particles przy nicku':'Nickname particles');
   setText('#nameEffectLabel',isPl?'Efekt nicku':'Nickname effect');
@@ -1665,15 +1668,13 @@ function repairStaticText(){
     'frame-aether':'Aether',
     'frame-petal':'Petal'
   };
-  const skinNames={'skin-default':isPl?'Domyślna':'Default','skin-void':'Void','skin-icy':'Icy','skin-ember':'Ember','skin-celestial':'Celestial'};
-  const shapeNames={'shape-round':isPl?'Zaokrąglony':'Round','shape-void':'Void','shape-icy':'Icy','shape-shard':'Shard'};
-  const overlayNames={'overlay-none':isPl?'Brak':'None','overlay-stars':isPl?'Gwiazdy':'Stars','overlay-aurora':'Aurora','overlay-grid':'Grid'};
-  const particleNames={'particles-none':isPl?'Brak':'None','particles-ember':'Ember','particles-cosmic':'Cosmic','particles-frost':'Frost'};
+  const skinNames={'skin-default':isPl?'Domyślna':'Default','skin-void':'Void','skin-icy':'Icy','skin-ember':'Ember','skin-celestial':'Celestial','skin-obsidian':'Obsidian','skin-nebula':'Nebula','skin-toxic':'Toxic'};
+  const overlayNames={'overlay-none':isPl?'Brak':'None','overlay-stars':isPl?'Gwiazdy':'Stars','overlay-aurora':'Aurora','overlay-grid':'Grid','overlay-fireflies':isPl?'Świetliki':'Fireflies','overlay-rain':'Rain','overlay-sparks':isPl?'Sparks':'Sparks'};
+  const particleNames={'particles-none':isPl?'Brak':'None','particles-ember':'Ember','particles-cosmic':'Cosmic','particles-frost':'Frost','particles-neon':'Neon','particles-gold':'Gold','particles-rose':'Rose'};
   document.querySelectorAll('[data-theme]').forEach(el=>{if(themeNames[el.dataset.theme])el.lastChild.textContent=themeNames[el.dataset.theme];});
   document.querySelectorAll('[data-namefx]').forEach(el=>{if(effectNames[el.dataset.namefx])el.lastChild.textContent=effectNames[el.dataset.namefx];});
   document.querySelectorAll('[data-frame]').forEach(el=>{if(frameNames[el.dataset.frame])el.lastChild.textContent=frameNames[el.dataset.frame];});
   document.querySelectorAll('[data-postskin]').forEach(el=>{if(skinNames[el.dataset.postskin])el.lastChild.textContent=skinNames[el.dataset.postskin];});
-  document.querySelectorAll('[data-shape]').forEach(el=>{if(shapeNames[el.dataset.shape])el.lastChild.textContent=shapeNames[el.dataset.shape];});
   document.querySelectorAll('[data-overlay]').forEach(el=>{if(overlayNames[el.dataset.overlay])el.lastChild.textContent=overlayNames[el.dataset.overlay];});
   document.querySelectorAll('[data-particles]').forEach(el=>{if(particleNames[el.dataset.particles])el.lastChild.textContent=particleNames[el.dataset.particles];});
 }
@@ -1699,15 +1700,16 @@ renderProfile=((original)=>function(prof){
   const parsed=parseProfileConfig(prof.social_links||[]);
   prof={...prof,social_links:parsed.visible};
   pendingPostSkin=parsed.config.post_skin||'skin-default';
-  pendingShapeStyle=parsed.config.shape_style||'shape-round';
   pendingBannerOverlay=parsed.config.banner_overlay||'overlay-none';
   pendingNameParticles=parsed.config.name_particles||'particles-none';
   pendingShowcaseUrl=parsed.config.showcase_url||'';
+  pendingShowcaseFill=String(parsed.config.showcase_fill||'0')==='1';
   original(prof);
   const showcaseInput=document.getElementById('editShowcaseUrl');
   if(showcaseInput)showcaseInput.value=pendingShowcaseUrl||'';
+  const showcaseFill=document.getElementById('editShowcaseFill');
+  if(showcaseFill)showcaseFill.checked=Boolean(pendingShowcaseFill);
   document.querySelectorAll('[data-postskin]').forEach(el=>el.classList.toggle('active',el.dataset.postskin===pendingPostSkin));
-  document.querySelectorAll('[data-shape]').forEach(el=>el.classList.toggle('active',el.dataset.shape===pendingShapeStyle));
   document.querySelectorAll('[data-overlay]').forEach(el=>el.classList.toggle('active',el.dataset.overlay===pendingBannerOverlay));
   document.querySelectorAll('[data-particles]').forEach(el=>el.classList.toggle('active',el.dataset.particles===pendingNameParticles));
   applyProfileExtras();
@@ -1732,6 +1734,7 @@ collectSocialLinks=function(){
     if(url)links.push({label:label||url,url});
   }
   pendingShowcaseUrl=document.getElementById('editShowcaseUrl')?.value.trim()||'';
+  pendingShowcaseFill=Boolean(document.getElementById('editShowcaseFill')?.checked);
   return buildSocialLinksPayload(links);
 };
 
