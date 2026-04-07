@@ -90,6 +90,9 @@ html{scrollbar-width:none;-ms-overflow-style:none}
 .info-value{display:block;font-size:18px;font-weight:600;color:var(--text-color)}
 .score-panel .premier-score{font-size:20px;font-weight:600;text-align:center}
 .score-info{text-align:center;font-size:14px;color:var(--muted-text);margin-top:10px}
+.score-ready{display:none;align-self:center;padding:8px 14px;border-radius:999px;background:rgba(70,255,154,.12);border:1px solid rgba(70,255,154,.35);color:#46ff9a;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.score-panel.is-qualified .score-ready{display:inline-flex}
+.score-panel.is-qualified .progress-bar{box-shadow:0 0 22px rgba(70,255,154,.35)}
 
 /* GALERIA */
 .gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-top:8px}
@@ -128,6 +131,7 @@ html{scrollbar-width:none;-ms-overflow-style:none}
 .post-text{font-size:13px;line-height:1.65;color:var(--text-color)}
 .post-actions{display:flex;align-items:center;gap:10px;padding-top:4px}
 .post-action{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:999px;border:1px solid var(--card-border);background:transparent;color:var(--muted-text);font:inherit;font-size:12px;font-weight:600}
+.post-action.shareable{cursor:pointer}
 .posts-empty{text-align:center;padding:36px 20px;color:var(--muted-text);font-size:14px;line-height:1.7}
 .posts-hidden-items{display:none}.posts-hidden-items.expanded{display:contents}
 
@@ -149,8 +153,8 @@ html{scrollbar-width:none;-ms-overflow-style:none}
 .modal h3{text-align:left;margin:0;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted-text)}
 .modal-close{width:36px;height:36px;border:1px solid var(--card-border);border-radius:50%;background:var(--card-bg-strong);color:var(--text-color);font:inherit;font-size:22px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:transform .2s,background .2s,border-color .2s}
 .modal-close:hover{transform:rotate(90deg);background:rgba(255,70,85,.12);border-color:rgba(255,70,85,.28)}
-#mapModal{width:min(860px,calc(100vw - 28px));padding:24px}
-.modal-map-img{width:100%;max-height:72vh;border-radius:18px;margin-top:8px;display:block;object-fit:contain}
+#mapModal{width:min(760px,calc(100vw - 28px));padding:22px}
+.modal-map-img{width:100%;max-height:66vh;border-radius:18px;margin-top:8px;display:block;object-fit:contain}
 
 /* LOGIN */
 .login-form{display:flex;flex-direction:column;gap:14px;padding:8px 0}
@@ -191,6 +195,8 @@ html{scrollbar-width:none;-ms-overflow-style:none}
 .control-action.theme-toggle{padding-right:16px}
 .control-action.language-toggle{min-width:72px;padding-left:16px;padding-right:16px}
 .control-action.refresh-button{width:46px;padding:0}
+.control-action.post-trigger{display:none}
+.control-action.post-trigger.visible{display:inline-flex}
 .refresh-button::before{content:"↻";display:block;font-size:24px;font-weight:700;transition:transform .35s}
 .refresh-button:hover::before{transform:rotate(180deg)}
 .theme-toggle-indicator{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--accent-soft),var(--accent));box-shadow:inset 0 2px 8px rgba(255,255,255,.24);flex-shrink:0}
@@ -239,6 +245,7 @@ body.light-theme .player-name{font-weight:600}
       <h3 data-i18n="premierScore">Premier Score</h3>
       <div class="premier-score">525 / 600</div>
       <div class="progress"><div class="progress-bar"></div></div>
+      <div class="score-ready" id="scoreReady">Playoffs Ready</div>
       <div class="score-info" data-i18n="scoreInfo">Min. 500 Premier Score aby zakwalifikować się do playoffs</div>
     </div>
     <div class="card dashboard-card full">
@@ -324,6 +331,17 @@ body.light-theme .player-name{font-weight:600}
   <a class="profile-dropdown-item" id="profileLink" href="profil.html">👤 Zobacz profil</a>
   <div class="profile-dropdown-item logout" onclick="handleLogout()">🚪 Wyloguj się</div>
 </div>
+<div class="modal post-modal" id="postModal">
+  <div class="modal-header"><h3>Nowy post</h3><button class="modal-close" onclick="closePostModal()">×</button></div>
+  <div class="login-form">
+    <div class="login-field"><label class="login-label">Tytuł</label><input class="login-input" type="text" id="postTitle" placeholder="Np. Win streak"></div>
+    <div class="login-field"><label class="login-label">Emoji</label><input class="login-input" type="text" id="postEmoji" placeholder="🔥"></div>
+    <div class="login-field"><label class="login-label">Opis</label><textarea class="login-input" id="postContent" style="min-height:100px;resize:vertical" placeholder="Napisz coś o poście..."></textarea></div>
+    <div class="login-field"><label class="login-label">Zdjęcie</label><input class="login-input" type="file" id="postImageInput" accept="image/*"></div>
+    <div class="login-error" id="postError"></div>
+    <button class="login-btn" id="postSubmitBtn" onclick="submitPost()">Opublikuj</button>
+  </div>
+</div>
 <div class="refresh-confirm" id="refreshConfirm">
   <p class="refresh-confirm-title">Potwierdzenie</p>
   <p class="refresh-confirm-text">Czy na pewno chcesz odświeżyć stronę?</p>
@@ -337,6 +355,7 @@ body.light-theme .player-name{font-weight:600}
     <span class="login-action-avatar" id="loginAvatar">?</span>
     <span class="login-action-text"><span class="login-action-label">Konto</span><span class="login-action-value" id="loginActionValue">Zaloguj</span></span>
   </button>
+  <button class="control-action post-trigger" id="postTrigger" type="button">✦ Nowy post</button>
   <button class="control-action theme-toggle" id="themeToggle" type="button">
     <span class="theme-toggle-indicator"></span>
     <span class="theme-toggle-text"><span class="theme-toggle-label">Motyw</span><span class="theme-toggle-value" id="themeToggleValue">Ciemny</span></span>
@@ -467,6 +486,7 @@ function updateAccessUI(){
   const value=document.getElementById('loginActionValue');
   const dropdown=document.getElementById('dropdownUsername');
   const profileLink=document.getElementById('profileLink');
+  const postTrigger=document.getElementById('postTrigger');
   const labels=document.querySelectorAll('#loginModal .login-label');
   const remember=document.querySelector('.login-remember');
   document.querySelector('#loginModal .modal-header h3').textContent='Kod dostepu';
@@ -486,12 +506,14 @@ function updateAccessUI(){
     profileLink.href=`profil.html?user=${encodeURIComponent(uploadAccess.username)}`;
     if(uploadAccess.avatarUrl){avatar.innerHTML=`<img src="${uploadAccess.avatarUrl}" alt="${uploadAccess.username}">`;}
     else{avatar.textContent=uploadAccess.username.charAt(0).toUpperCase();}
+    if(postTrigger)postTrigger.classList.add('visible');
   }else{
     value.textContent='Kod';
     dropdown.textContent='brak';
     profileLink.href='profil.html';
     avatar.textContent='#';
     avatar.innerHTML='#';
+    if(postTrigger)postTrigger.classList.remove('visible');
   }
 }
 async function verifyCode(username,code){
@@ -584,7 +606,23 @@ function makePostCard(post){
   el.innerHTML=`${image}<div class="post-body"><div class="post-emoji">${emoji}</div><div class="post-title">${title}</div><div class="post-meta"><a class="post-author" href="profil.html?user=${encodeURIComponent(author)}">${author}</a><span>${fmtDate(post.created_at||new Date().toISOString())}</span></div><div class="post-text">${body||'Bez opisu.'}</div><div class="post-actions"><button class="post-action" type="button">❤ ${likes}</button><button class="post-action" type="button">↗ Udostepnij</button></div></div>`;
   const img=el.querySelector('img');
   if(img)img.addEventListener('click',()=>openLightbox(post.image_url));
+  const actions=el.querySelector('.post-actions');
+  if(actions){
+    const shareBtn=actions.lastElementChild;
+    if(shareBtn)shareBtn.classList.add('shareable');
+    if(shareBtn)shareBtn.addEventListener('click',()=>sharePost(post));
+  }
   return el;
+}
+
+async function sharePost(post){
+  const url=`${location.origin}${location.pathname.replace(/index\.html?$/,'')}profil.html?user=${encodeURIComponent(post.username||'')}`;
+  const text=`${post.emoji||'📝'} ${post.title||'Post'}${post.content?` - ${post.content}`:''}`;
+  if(navigator.share){
+    try{await navigator.share({title:post.title||'Post',text,url});return;}catch{}
+  }
+  try{await navigator.clipboard.writeText(`${text}\n${url}`);alert('Link do posta skopiowany.');}
+  catch{alert(url);}
 }
 
 async function loadPosts(){
@@ -696,6 +734,58 @@ function openCodeModal(prefill=''){
   document.getElementById('loginUsername').value=prefill||uploadAccess?.username||'';
   document.getElementById('loginPassword').value='';
 }
+window.openPostModal=function(){
+  if(!uploadAccess?.username){openCodeModal();return;}
+  closeAllPopups();
+  blurOverlay.classList.add('active');
+  document.getElementById('postModal').classList.add('active');
+  document.getElementById('postError').textContent='';
+};
+window.closePostModal=function(){
+  document.getElementById('postModal').classList.remove('active');
+  blurOverlay.classList.remove('active');
+};
+window.submitPost=async function(){
+  if(!uploadAccess?.username||!uploadAccess?.code)return;
+  const btn=document.getElementById('postSubmitBtn');
+  const err=document.getElementById('postError');
+  const title=document.getElementById('postTitle').value.trim();
+  const emoji=document.getElementById('postEmoji').value.trim();
+  const content=document.getElementById('postContent').value.trim();
+  const file=document.getElementById('postImageInput').files[0]||null;
+  let imageUrl=null;
+  err.textContent='';
+  btn.disabled=true;btn.textContent='Publikowanie...';
+  try{
+    if(file){
+      const ext=file.name.split('.').pop();
+      const fname=`post_${uploadAccess.username}_${Date.now()}.${ext}`;
+      const { error: uploadError } = await supabase.storage.from('EterStorage').upload(fname,file,{upsert:false});
+      if(uploadError)throw uploadError;
+      const { data:urlData } = supabase.storage.from('EterStorage').getPublicUrl(fname);
+      imageUrl=urlData.publicUrl;
+    }
+    const { error } = await supabase.rpc('create_post_by_code',{
+      p_username:uploadAccess.username,
+      p_code:uploadAccess.code,
+      p_title:title||null,
+      p_content:content||null,
+      p_emoji:emoji||null,
+      p_image_url:imageUrl
+    });
+    if(error)throw error;
+    document.getElementById('postTitle').value='';
+    document.getElementById('postEmoji').value='';
+    document.getElementById('postContent').value='';
+    document.getElementById('postImageInput').value='';
+    closePostModal();
+    await loadPosts();
+  }catch(error){
+    err.textContent='Blad publikacji: '+error.message;
+  }finally{
+    btn.disabled=false;btn.textContent='Opublikuj';
+  }
+};
 window.closeLoginModal=function(){blurOverlay.classList.remove('active');loginModal.classList.remove('active');document.getElementById('loginError').textContent='';};
 window.hideRefreshConfirm=function(){refreshConfirm.classList.remove('active');};
 
@@ -704,9 +794,10 @@ loginToggle.addEventListener('click',e=>{
   if(uploadAccess){closeAllPopups();profileDropdown.classList.toggle('active');}
   else{openCodeModal();}
 });
+document.getElementById('postTrigger').addEventListener('click',e=>{e.stopPropagation();openPostModal();});
 refreshButton.addEventListener('click',e=>{e.stopPropagation();closeAllPopups();refreshConfirm.classList.add('active');});
 document.getElementById('refreshConfirmBtn').addEventListener('click',()=>{['eter-theme','eter-language'].forEach(k=>localStorage.removeItem(k));sessionStorage.removeItem(UPLOAD_ACCESS_KEY);location.reload(true);});
-blurOverlay.addEventListener('click',()=>{closeLoginModal();closeMapModal();});
+blurOverlay.addEventListener('click',()=>{closeLoginModal();closeMapModal();closePostModal();});
 window.addEventListener('click',e=>{
   if(!refreshConfirm.contains(e.target)&&e.target!==refreshButton)refreshConfirm.classList.remove('active');
   if(!profileDropdown.contains(e.target)&&!loginToggle.contains(e.target))profileDropdown.classList.remove('active');
@@ -795,12 +886,23 @@ function applyTheme(theme){
   localStorage.setItem('eter-theme',light?'light':'dark');
 }
 
+function updateQualificationState(){
+  const scoreText=document.querySelector('.premier-score')?.textContent||'';
+  const current=Number((scoreText.match(/\d+/)||['0'])[0]);
+  const ready=current>=500;
+  const panel=document.querySelector('.score-panel');
+  if(panel)panel.classList.toggle('is-qualified',ready);
+  const badge=document.getElementById('scoreReady');
+  if(badge)badge.textContent=ready?'Playoffs Ready':'Below Cutoff';
+}
+
 document.getElementById('themeToggle').addEventListener('click',()=>applyTheme(document.body.classList.contains('light-theme')?'dark':'light'));
 document.getElementById('languageToggle').addEventListener('click',()=>applyLang(currentLang==='pl'?'en':'pl'));
 
 applyLang(currentLang);
 applyTheme(localStorage.getItem('eter-theme')==='light'?'light':'dark');
 updateAccessUI();
+updateQualificationState();
 await loadGallery();
 await loadPosts();
 </script>
