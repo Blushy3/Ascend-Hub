@@ -218,7 +218,7 @@ linear-gradient(180deg,rgba(17,18,28,.98),rgba(13,14,24,.98));box-shadow:0 34px 
 .login-form{display:flex;flex-direction:column;gap:14px;padding:8px 0}
 #loginModal .login-form{gap:16px}
 #loginModal .login-title{margin:6px 0 10px}
-#loginModal .login-input,#postModal .login-input,#postModal textarea.login-input{background:linear-gradient(180deg,rgba(34,35,46,.98),rgba(24,25,34,.98));color:#f5f7ff;border-color:rgba(255,255,255,.08);box-shadow:inset 0 1px 0 rgba(255,255,255,.03)}
+#loginModal .login-input,#postModal .login-input,#postModal textarea.login-input{background:var(--card-bg-strong)!important;color:#f5f7ff;border-color:rgba(255,255,255,.08);box-shadow:inset 0 1px 0 rgba(255,255,255,.03)}
 #loginModal .login-input::placeholder{color:rgba(232,236,255,.42)}
 #loginModal .login-btn{margin-top:8px}
 .post-modal{width:min(740px,calc(100vw - 28px));padding:26px}
@@ -331,28 +331,6 @@ body.light-theme .player-name{font-weight:600}
         <div class="history-row history-hidden" data-result="win"><div class="history-map">HAVEN</div><div class="history-opponent">vs WIESULIS</div><div class="history-score">13-07</div><div class="history-points">+100</div></div>
       </div>
     </div>
-    <!-- GALERIA -->
-    <div class="card gallery-panel dashboard-card full">
-      <h3>
-        <span data-static-label="galleryTitle">Galeria Premier</span>
-        <button class="expand-btn" id="galleryExpandBtn" style="display:none" onclick="toggleGallery()">Rozwin <span class="expand-arrow" id="galleryArrow">▼</span></button>
-      </h3>
-      <div id="galleryUploadWrap" style="display:none">
-        <div class="gallery-upload-area" id="uploadArea" onclick="document.getElementById('galleryFileInput').click()">
-          <div class="gallery-upload-icon">🖼️</div>
-          <div>Kliknij lub przeciągnij grafikę tutaj</div>
-          <div class="gallery-upload-hint">PNG, JPG, GIF, WEBP — maks. 5 MB</div>
-          <input type="file" id="galleryFileInput" accept="image/*">
-        </div>
-        <div class="gallery-upload-progress" id="uploadProgress">
-          <div class="gallery-upload-bar-wrap"><div class="gallery-upload-bar" id="uploadBar"></div></div>
-          <div class="gallery-upload-label" id="uploadLabel">Wysyłanie...</div>
-        </div>
-      </div>
-      <div class="gallery-grid" id="galleryVisible"></div>
-      <div class="gallery-hidden-items" id="galleryHidden"></div>
-      <div id="galleryEmpty" class="gallery-empty" style="display:none"><div class="gallery-empty-icon">📷</div><div>Galeria jest pusta.<br>Zaloguj się i dodaj pierwszą grafikę!</div></div>
-    </div>
     <div class="card posts-panel dashboard-card full">
       <h3>
         <span data-static-label="postsTitle">Posty</span>
@@ -460,10 +438,7 @@ body.light-theme .player-name{font-weight:600}
 <script type="module">
 import { supabase } from './supabase-client.js';
 
-const GALLERY_LIMIT=6;
 const POSTS_LIMIT=3;
-let galleryAll=[];
-let galleryExpanded=false;
 let postsAll=[];
 let postsExpanded=false;
 let currentLang=localStorage.getItem('eter-language')||'pl';
@@ -518,13 +493,11 @@ async function updateAuthUI(user,username,avatarUrl){
     if(avatarUrl){av.innerHTML=`<img src="${avatarUrl}" alt="${username}">`;}
     else{av.textContent=username.charAt(0).toUpperCase();}
     if(plink)plink.href=`profil.html?user=${encodeURIComponent(username)}`;
-    document.getElementById('galleryUploadWrap').style.display='block';
   } else {
     val.textContent='Zaloguj';
     dname.textContent='—';
     av.textContent='?';
     av.innerHTML='?';
-    document.getElementById('galleryUploadWrap').style.display='none';
   }
 }
 
@@ -749,7 +722,7 @@ function makeGalleryItem(item){
 }
 
 async function loadGallery(){
-  galleryAll=[];
+  return;
 }
 
 function renderGallery(){
@@ -840,7 +813,7 @@ function handlePostLike(post,button){
 
 async function sharePost(post){
   if(!postHasShareContent(post)){return;}
-  const url=`${location.origin}${location.pathname.replace(/index\.html?$/,'')}profil.html?user=${encodeURIComponent(post.username||'')}#post-${post.id||''}`;
+  const url=`${location.origin}${location.pathname.replace(/index\.html?$/,'')}profil.html?user=${encodeURIComponent(post.username||'')}`;
   const title=getPostTitle(post);
   const body=getPostBody(post);
   const emoji=getPostEmoji(post);
@@ -940,48 +913,6 @@ window.togglePosts=function(){
   if(btn)btn.childNodes[0].textContent=postsExpanded?T().collapse+' ':T().expand+' ';
 };
 
-window.toggleGallery=function(){
-  return;
-};
-
-// Upload
-const uploadArea=document.getElementById('uploadArea');
-const fileInput=document.getElementById('galleryFileInput');
-uploadArea.addEventListener('dragover',e=>{e.preventDefault();uploadArea.classList.add('drag-over');});
-uploadArea.addEventListener('dragleave',()=>uploadArea.classList.remove('drag-over'));
-uploadArea.addEventListener('drop',e=>{e.preventDefault();uploadArea.classList.remove('drag-over');if(e.dataTransfer.files[0])requestUpload(e.dataTransfer.files[0]);});
-uploadArea.addEventListener('click',()=>{if(uploadAccess){fileInput.click();}else{openCodeModal();}});
-fileInput.addEventListener('change',()=>{if(fileInput.files[0])requestUpload(fileInput.files[0]);});
-
-function requestUpload(file){
-  if(!uploadAccess){
-    pendingUploadFile=file;
-    openCodeModal();
-    return;
-  }
-  doUpload(file);
-}
-
-async function doUpload(file){
-  if(!uploadAccess?.username||!uploadAccess?.code)return;
-  if(file.size>5*1024*1024){alert('Plik za duży! Maks. 5 MB.');return;}
-  const prog=document.getElementById('uploadProgress');
-  const bar=document.getElementById('uploadBar');
-  const lbl=document.getElementById('uploadLabel');
-  prog.classList.add('visible');bar.style.width='20%';lbl.textContent='Wysyłanie...';
-  const ext=file.name.split('.').pop();
-  const fname=`gallery_${uploadAccess.username}_${Date.now()}.${ext}`;
-  const{error:se}=await supabase.storage.from('EterStorage').upload(fname,file,{cacheControl:'3600',upsert:false});
-  if(se){lbl.textContent='Błąd: '+se.message;bar.style.background='var(--danger)';return;}
-  bar.style.width='70%';
-  const{data:ud}=supabase.storage.from('EterStorage').getPublicUrl(fname);
-  const{error:de}=await supabase.rpc('create_gallery_item_by_code',{p_username:uploadAccess.username,p_code:uploadAccess.code,p_image_url:ud.publicUrl});
-  if(de){lbl.textContent='Błąd zapisu: '+de.message;return;}
-  bar.style.width='100%';lbl.textContent='Dodano! ✅';fileInput.value='';
-  setTimeout(()=>{prog.classList.remove('visible');bar.style.width='0%';bar.style.background='';lbl.textContent='Wysyłanie...';},2000);
-  // gallery removed from main page
-}
-
 // Lightbox
 window.openLightbox=function(src){document.getElementById('lightboxImg').src=src;document.getElementById('lightbox').classList.add('active');};
 window.closeLightbox=function(){document.getElementById('lightbox').classList.remove('active');};
@@ -1032,7 +963,7 @@ window.submitPost=async function(){
   let imageUrl=null;
   err.textContent='';
   if(!title&&!emoji&&!content&&!file){err.textContent=T().emptyPostError;return;}
-  if(file&&file.size>5*1024*1024){err.textContent='Maks. 5 MB dla grafiki posta.';return;}
+  if(file&&file.size>4*1024*1024){err.textContent='Maks. 4 MB dla grafiki posta.';return;}
   const finalContent=`${isPremier?`${PREMIER_MARKER} `:''}${content}`.trim();
   btn.disabled=true;btn.textContent='Publikowanie...';
   try{
