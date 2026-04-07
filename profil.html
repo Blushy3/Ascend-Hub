@@ -280,10 +280,12 @@ body.prof-valorant .prof-name,body.prof-valorant .prof-section-title{font-weight
 .memory-saver-badge.visible{display:inline-flex}
 .memory-saver-icon{width:18px;height:18px;border-radius:999px;display:inline-flex;align-items:center;justify-content:center;background:transparent;font-size:14px;flex-shrink:0}
 .memory-saver-copy,.memory-saver-title,.memory-saver-text{display:none}
-.memory-saver-badge::after{content:attr(data-tooltip);position:absolute;right:0;bottom:calc(100% + 10px);min-width:180px;max-width:230px;padding:10px 12px;border-radius:14px;border:1px solid rgba(255,255,255,.1);background:linear-gradient(180deg,rgba(20,22,34,.98),rgba(14,16,26,.98));box-shadow:0 18px 44px rgba(0,0,0,.32);color:#eef2ff;font-size:12px;line-height:1.45;letter-spacing:.01em;opacity:0;transform:translateY(6px);pointer-events:none;transition:opacity .18s ease,transform .18s ease;white-space:normal;text-align:left}
-.memory-saver-badge::before{content:'';position:absolute;right:13px;bottom:calc(100% + 2px);width:10px;height:10px;background:rgba(20,22,34,.98);border-right:1px solid rgba(255,255,255,.1);border-bottom:1px solid rgba(255,255,255,.1);transform:rotate(45deg);opacity:0;transition:opacity .18s ease}
-.memory-saver-badge:hover::after,.memory-saver-badge:hover::before,.memory-saver-badge:focus-visible::after,.memory-saver-badge:focus-visible::before{opacity:1;transform:translateY(0)}
-.avatar-link-badge{right:-4px;bottom:-4px;background:linear-gradient(135deg,color-mix(in srgb,#7ce7ff 22%,rgba(8,10,18,.94)),color-mix(in srgb,#95ffbf 18%,rgba(8,10,18,.88)));box-shadow:0 12px 24px rgba(22,78,76,.24)}
+.asset-badge-preview{width:auto!important;height:auto!important;padding:12px 14px;gap:12px;border-radius:16px;justify-content:flex-start}
+.asset-badge-preview .memory-saver-copy,.asset-badge-preview .memory-saver-title,.asset-badge-preview .memory-saver-text{display:block}
+.asset-badge-preview .memory-saver-copy{display:flex;flex-direction:column;gap:4px}
+.asset-badge-preview .memory-saver-title{font-size:13px;font-weight:700;color:#fff}
+.asset-badge-preview .memory-saver-text{font-size:12px;line-height:1.45;color:rgba(232,236,255,.72)}
+.avatar-link-badge{right:54px;bottom:12px;background:linear-gradient(135deg,color-mix(in srgb,#7ce7ff 22%,rgba(8,10,18,.94)),color-mix(in srgb,#95ffbf 18%,rgba(8,10,18,.88)));box-shadow:0 12px 24px rgba(22,78,76,.24)}
 .banner-overlay-stars{background-image:radial-gradient(circle at 20% 30%,rgba(255,255,255,.8) 0 1px,transparent 1.5px),radial-gradient(circle at 70% 40%,rgba(185,223,255,.9) 0 1px,transparent 1.8px),radial-gradient(circle at 45% 70%,rgba(255,231,179,.8) 0 1px,transparent 1.6px);background-size:180px 180px;animation:overlayDrift 10s linear infinite}
 .banner-overlay-aurora{background:linear-gradient(120deg,rgba(124,246,214,.24),rgba(124,199,255,.18),rgba(190,154,255,.22));filter:blur(18px);animation:overlayPulse 5s ease-in-out infinite}
 .banner-overlay-grid{background-image:linear-gradient(rgba(124,199,255,.14) 1px,transparent 1px),linear-gradient(90deg,rgba(124,199,255,.14) 1px,transparent 1px);background-size:34px 34px;animation:overlayDrift 9s linear infinite}
@@ -569,7 +571,7 @@ body.light-theme .theme-toggle-indicator{background:linear-gradient(135deg,#fff3
 #loginModal .login-input::placeholder,#postModal .login-input::placeholder,.prof-edit-textarea::placeholder{color:rgba(232,236,255,.42)}
 #postModal .prof-edit-textarea{min-height:148px;max-height:240px;resize:none;overflow:auto}
 .login-input[type="file"]::file-selector-button{margin-right:12px;padding:9px 14px;border:none;border-radius:10px;background:rgba(255,255,255,.1);color:#fff;font:inherit;font-size:13px;font-weight:600;cursor:pointer}
-#editBio{min-height:110px;max-height:110px;overflow:auto;scrollbar-gutter:stable}
+#editBio{min-height:110px;max-height:110px;overflow:auto;scrollbar-gutter:stable;background:linear-gradient(180deg,rgba(34,35,46,.98),rgba(24,25,34,.98))!important}
 .login-remember{display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13px;color:var(--muted-text);user-select:none;}
 .login-remember input{width:16px;height:16px;accent-color:var(--accent);cursor:pointer}
 #loginModal .login-remember{display:none!important}
@@ -2684,7 +2686,7 @@ function ensureAssetSourceModal(){
           <button class="login-btn" type="button" id="assetChooseFileBtn" onclick="triggerAssetFilePick()">Wybierz plik</button>
         </div>
         <div id="assetSourceLinkPanel" style="display:none">
-          <div class="memory-saver-badge visible" id="assetBadgePreview" style="position:static;max-width:none;margin-bottom:12px">
+          <div class="memory-saver-badge visible asset-badge-preview" id="assetBadgePreview" style="position:static;max-width:none;margin-bottom:12px">
             <span class="memory-saver-icon">🍃</span>
             <span class="memory-saver-copy">
               <span class="memory-saver-title">Ochroniarz Pamięci</span>
@@ -2716,14 +2718,13 @@ function updateMemorySaverBadge(){
   badge.title='Ochroniarz Pamięci: banner z linku oszczędza pamięć hostingu.';
   badge.classList.toggle('visible',pendingBannerSourceMode==='link'&&Boolean(viewedProfile?.banner_url));
   let avatarBadge=document.getElementById('avatarLinkBadge');
-  const avatarWrap=document.getElementById('avatarWrap');
-  if(avatarWrap&&!avatarBadge){
+  if(!avatarBadge){
     avatarBadge=document.createElement('button');
     avatarBadge.type='button';
     avatarBadge.id='avatarLinkBadge';
     avatarBadge.className='memory-saver-badge avatar-link-badge';
     avatarBadge.innerHTML=`<span class="memory-saver-icon">✦</span>`;
-    avatarWrap.appendChild(avatarBadge);
+    bannerWrap.appendChild(avatarBadge);
   }
   if(avatarBadge){
     avatarBadge.title='Strażnik Linku: zdjęcie profilowe jest ustawione z linku.';
@@ -2794,7 +2795,7 @@ window.openAssetSourceModal=function(type){
   document.getElementById('assetLinkHint').textContent=type==='banner'
     ?(currentLang==='pl'?'Przy bannerze z linku pojawi się odznaka oszczędzania pamięci hostingu.':'A linked banner gets the hosting memory saver badge.')
     :(currentLang==='pl'?'Link działa bez uploadu na storage i ustawia obraz od razu. Avatar z linku dostaje własną małą odznakę.':'A link skips storage upload and sets the image instantly. Linked avatars get their own small badge.');
-  document.getElementById('assetBadgePreview').style.display=type==='banner'?'flex':'none';
+  document.getElementById('assetBadgePreview').style.display='flex';
   document.getElementById('assetClearBtn').textContent=type==='banner'
     ?(currentLang==='pl'?'Usuń banner':'Remove banner')
     :(currentLang==='pl'?'Usuń zdjęcie':'Remove picture');
@@ -2965,15 +2966,17 @@ updateMemorySaverBadge=function(){
   originalUpdateMemorySaverBadgeEnhanced();
   const bannerBadge=document.getElementById('memorySaverBadge');
   if(bannerBadge){
-    bannerBadge.setAttribute('data-tooltip','Ochroniarz Pamięci. Banner z linku oszczędza pamięć hostingu.');
+    bannerBadge.removeAttribute('data-tooltip');
     const icon=bannerBadge.querySelector('.memory-saver-icon');
     if(icon)icon.textContent='🍃';
+    bannerBadge.title='Ochroniarz Pamięci: banner z linku oszczędza pamięć hostingu.';
   }
   const avatarBadge=document.getElementById('avatarLinkBadge');
   if(avatarBadge){
-    avatarBadge.setAttribute('data-tooltip','Ochroniarz bazy danych. Avatar z linku nie zajmuje miejsca w storage.');
+    avatarBadge.removeAttribute('data-tooltip');
     const icon=avatarBadge.querySelector('.memory-saver-icon');
     if(icon)icon.textContent='🗄';
+    avatarBadge.title='Ochroniarz bazy danych: avatar z linku nie zajmuje miejsca w storage.';
   }
 };
 
@@ -2987,11 +2990,27 @@ openAssetSourceModal=function(type){
       ?(currentLang==='pl'?'Usuń banner':'Remove banner')
       :(currentLang==='pl'?'Usuń zdjęcie':'Remove picture');
   }
+  const linkHint=document.getElementById('assetLinkHint');
+  if(linkHint){
+    linkHint.textContent=type==='banner'
+      ?(currentLang==='pl'?'Przy bannerze z linku pojawi się odznaka oszczędzania pamięci hostingu.':'A linked banner gets the hosting memory saver badge.')
+      :(currentLang==='pl'?'Link działa bez uploadu na storage i ustawia obraz od razu. Avatar z linku dostaje odznakę obok tej od bannera.':'A link skips storage upload and sets the image instantly. Linked avatars get a badge next to the banner one.');
+  }
   const bannerPreview=document.getElementById('assetBadgePreview');
   if(bannerPreview){
-    bannerPreview.setAttribute('data-tooltip','Ochroniarz Pamięci. Banner z linku oszczędza pamięć hostingu.');
     const previewIcon=bannerPreview.querySelector('.memory-saver-icon');
-    if(previewIcon)previewIcon.textContent='🍃';
+    const previewTitle=bannerPreview.querySelector('.memory-saver-title');
+    const previewText=bannerPreview.querySelector('.memory-saver-text');
+    bannerPreview.style.display='flex';
+    if(type==='banner'){
+      if(previewIcon)previewIcon.textContent='🍃';
+      if(previewTitle)previewTitle.textContent='Ochroniarz Pamięci';
+      if(previewText)previewText.textContent='Banner z linku oszczędza pamięć hostingu i dostaje własną odznakę.';
+    }else{
+      if(previewIcon)previewIcon.textContent='🗄';
+      if(previewTitle)previewTitle.textContent='Ochroniarz bazy danych';
+      if(previewText)previewText.textContent='Avatar z linku oszczędza miejsce w storage i dostaje odznakę obok tej od bannera.';
+    }
   }
 };
 
